@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cities2-cityadvisor"
+version = "0.1.0"
+description = "Local Cities: Skylines II city evidence analysis tools."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "mayor-modder" }]
+
+[project.scripts]
+cityadvisor = "cityadvisor.cli:main"
+cityadvisor-mcp = "cityadvisor.mcp_server:main"
+
+[tool.setuptools.packages.find]
+include = ["cityadvisor*"]

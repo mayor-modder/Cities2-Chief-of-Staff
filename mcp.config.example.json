@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "cities2-cityadvisor": {
+      "command": "<PYTHON_PATH>",
+      "args": [
+        "<REPO_ROOT>/cityadvisor/mcp_server.py",
+        "--mods-data",
+        "<MODS_DATA_DIR>",
+        "--save-investigator-output",
+        "<SAVE_INVESTIGATOR_OUTPUT_DIR>"
+      ]
+    }
+  }
+}
