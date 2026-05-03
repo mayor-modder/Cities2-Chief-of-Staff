@@ -96,6 +96,33 @@ class SourceDiscoveryTests(unittest.TestCase):
         self.assertEqual(report.city_name, "BOM Bay")
         self.assertIn("Population: 50", report.markdown)
 
+    def test_reads_current_dataexport_pascal_case_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            mods_data = Path(tmp) / "ModsData"
+            dataexport = mods_data / "CS2DataExport"
+            dataexport.mkdir(parents=True)
+            (dataexport / "latest.json").write_text(
+                json.dumps(
+                    {
+                        "SchemaVersion": "2.6.0",
+                        "ExportedAtUtc": "2026-05-03T20:28:12Z",
+                        "City": {"CityName": "Pascal City", "Status": "ok"},
+                        "Population": {"TotalPopulation": 176073, "Status": "ok"},
+                        "TransportProxies": {"ActiveTransportLines": 25},
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            inventory = discover_sources(mods_data_dir=mods_data)
+            report = build_city_report(inventory)
+
+        source = inventory.sources[0]
+        self.assertEqual(source.summary["schema_version"], "2.6.0")
+        self.assertEqual(report.city_name, "Pascal City")
+        self.assertIn("Population: 176,073", report.markdown)
+        self.assertIn("Active transport lines: 25", report.markdown)
+
 
 if __name__ == "__main__":
     unittest.main()

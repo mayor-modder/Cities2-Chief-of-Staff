@@ -40,8 +40,14 @@ def _dataexport_status(mods_data: Path) -> SourceStatus:
             message="No DataExport latest.json found.",
         )
     city = _as_dict(payload.get("city"))
+    if not city:
+        city = _as_dict(payload.get("City"))
     population = _as_dict(payload.get("population"))
+    if not population:
+        population = _as_dict(payload.get("Population"))
     transport = _as_dict(payload.get("transport_proxies"))
+    if not transport:
+        transport = _as_dict(payload.get("TransportProxies"))
     return SourceStatus(
         name="dataexport",
         label="Cities2-DataExport",
@@ -50,11 +56,15 @@ def _dataexport_status(mods_data: Path) -> SourceStatus:
         kind="live_sample",
         message="DataExport latest.json is available.",
         summary={
-            "city_name": city.get("city_name"),
-            "exported_at_utc": payload.get("exported_at_utc"),
-            "schema_version": payload.get("schema_version"),
-            "total_population": population.get("total_population"),
-            "active_transport_lines": transport.get("active_transport_lines"),
+            "city_name": _first_present(city, "city_name", "CityName"),
+            "exported_at_utc": _first_present(payload, "exported_at_utc", "ExportedAtUtc"),
+            "schema_version": _first_present(payload, "schema_version", "SchemaVersion"),
+            "total_population": _first_present(population, "total_population", "TotalPopulation"),
+            "active_transport_lines": _first_present(
+                transport,
+                "active_transport_lines",
+                "ActiveTransportLines",
+            ),
         },
     )
 
@@ -80,7 +90,7 @@ def _infoloom_status(mods_data: Path) -> SourceStatus:
         kind="optional_live_detail",
         message="InfoLoomBridge latest.json is available.",
         summary={
-            "exported_at_utc": payload.get("exported_at_utc"),
+            "exported_at_utc": _first_present(payload, "exported_at_utc", "generated_at"),
             "panel_count": len(panels),
             "panels": sorted(panels.keys()),
         },
@@ -137,3 +147,10 @@ def _read_json(path: Path) -> dict[str, Any] | None:
 
 def _as_dict(value: object) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
+
+
+def _first_present(payload: dict[str, Any], *keys: str) -> Any:
+    for key in keys:
+        if key in payload:
+            return payload[key]
+    return None
