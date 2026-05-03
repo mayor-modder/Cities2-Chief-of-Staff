@@ -24,9 +24,11 @@ def build_city_report(inventory: SourceInventory) -> CityReport:
     lines.append("")
     lines.append("## Summary")
 
+    transit_hotspots: list[dict[str, Any]] = []
     if dataexport and dataexport.available:
         _add_fact_line(lines, facts, "Population", dataexport.summary.get("total_population"), number=True)
         _add_fact_line(lines, facts, "Active transport lines", dataexport.summary.get("active_transport_lines"), number=True)
+        transit_hotspots = _named_transit_hotspots(dataexport, save)
     if save and save.available:
         _add_fact_line(
             lines,
@@ -40,6 +42,19 @@ def build_city_report(inventory: SourceInventory) -> CityReport:
         if isinstance(panels, list):
             facts["infoloom_panels"] = panels
             lines.append(f"- InfoLoom panels: {', '.join(str(panel) for panel in panels) or 'none'}")
+
+    if transit_hotspots:
+        facts["transit_hotspots"] = transit_hotspots
+        lines.append("")
+        lines.append("## Transit Hotspots")
+        for hotspot in transit_hotspots:
+            name = hotspot["name"]
+            waiting = hotspot["waiting_passengers"]
+            max_stop = hotspot.get("max_waiting_at_stop")
+            if max_stop is None:
+                lines.append(f"- {name}: {waiting:,} waiting")
+            else:
+                lines.append(f"- {name}: {waiting:,} waiting, max stop {max_stop:,}")
 
     lines.append("")
     lines.append("## Next Useful Evidence")
@@ -92,3 +107,43 @@ def _add_fact_line(
     else:
         rendered = str(value)
     lines.append(f"- {label}: {rendered}{suffix}")
+
+
+def _named_transit_hotspots(dataexport: SourceStatus, save: SourceStatus | None) -> list[dict[str, Any]]:
+    hotspots = dataexport.summary.get("transit_hotspots")
+    if not isinstance(hotspots, list):
+        return []
+    name_lookup = {}
+    if save and save.available and isinstance(save.summary.get("transit_line_names"), dict):
+        name_lookup = save.summary["transit_line_names"]
+    named: list[dict[str, Any]] = []
+    for hotspot in hotspots:
+        if not isinstance(hotspot, dict):
+            continue
+        route_number = hotspot.get("route_number")
+        color = str(hotspot.get("color") or "").upper()
+        name = name_lookup.get(f"{route_number}|{color}") or _fallback_line_name(hotspot)
+        waiting = hotspot.get("waiting_passengers")
+        if not isinstance(waiting, (int, float)):
+            continue
+        named.append(
+            {
+                "name": name,
+                "waiting_passengers": int(waiting),
+                "max_waiting_at_stop": hotspot.get("max_waiting_at_stop"),
+                "route_number": route_number,
+                "color": color,
+            }
+        )
+    return named
+
+
+def _fallback_line_name(hotspot: dict[str, Any]) -> str:
+    fallback = hotspot.get("fallback_name")
+    if isinstance(fallback, str) and fallback.strip():
+        return fallback.strip()
+    route_number = hotspot.get("route_number")
+    color = hotspot.get("color")
+    if route_number is not None and color:
+        return f"Route {route_number} {color}"
+    return "Unknown transit line"

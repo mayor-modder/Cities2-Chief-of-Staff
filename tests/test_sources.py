@@ -123,6 +123,80 @@ class SourceDiscoveryTests(unittest.TestCase):
         self.assertIn("Population: 176,073", report.markdown)
         self.assertIn("Active transport lines: 25", report.markdown)
 
+    def test_names_live_transit_hotspots_from_save_investigator(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            mods_data = root / "ModsData"
+            dataexport = mods_data / "CS2DataExport"
+            save_output = root / "SaveInvestigator" / "output" / "20260503-120000"
+            dataexport.mkdir(parents=True)
+            save_output.mkdir(parents=True)
+            (dataexport / "latest.json").write_text(
+                json.dumps(
+                    {
+                        "City": {"CityName": "Copeland"},
+                        "TransitLineDetailSemantics": {
+                            "Lines": [
+                                {
+                                    "RouteNumber": 2,
+                                    "Mode": "tram",
+                                    "LineColor": "#EB131B",
+                                    "WaitingPassengersAllStops": 436,
+                                    "MaxWaitingPassengersAtStop": 110,
+                                },
+                                {
+                                    "RouteNumber": 5,
+                                    "Mode": "tram",
+                                    "LineColor": "#FDB913",
+                                    "WaitingPassengersAllStops": 90,
+                                    "MaxWaitingPassengersAtStop": 55,
+                                },
+                            ]
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (save_output / "city-state-report-facts.json").write_text(
+                json.dumps({"EstimatedCompletionPercent": 72}),
+                encoding="utf-8",
+            )
+            (save_output / "transport-report-facts.json").write_text(
+                json.dumps(
+                    {
+                        "LineGroups": [
+                            {
+                                "Mode": "unresolved",
+                                "Lines": [
+                                    {
+                                        "DisplayName": "Isaiah Streetcar",
+                                        "RouteNumber": 2,
+                                        "ColorHex": "#EB131B",
+                                    },
+                                    {
+                                        "DisplayName": "Swan Streetcar",
+                                        "RouteNumber": 5,
+                                        "ColorHex": "#FDB913",
+                                    },
+                                ],
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            inventory = discover_sources(
+                mods_data_dir=mods_data,
+                save_investigator_output_dir=root / "SaveInvestigator" / "output",
+            )
+            report = build_city_report(inventory)
+
+        self.assertIn("Isaiah Streetcar: 436 waiting, max stop 110", report.markdown)
+        self.assertIn("Swan Streetcar: 90 waiting, max stop 55", report.markdown)
+        self.assertLess(report.markdown.index("Save understanding"), report.markdown.index("## Transit Hotspots"))
+        self.assertNotIn("Route 2", report.markdown)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -48,6 +48,9 @@ def _dataexport_status(mods_data: Path) -> SourceStatus:
     transport = _as_dict(payload.get("transport_proxies"))
     if not transport:
         transport = _as_dict(payload.get("TransportProxies"))
+    transit_detail = _as_dict(payload.get("transit_line_detail_semantics"))
+    if not transit_detail:
+        transit_detail = _as_dict(payload.get("TransitLineDetailSemantics"))
     return SourceStatus(
         name="dataexport",
         label="Cities2-DataExport",
@@ -65,6 +68,7 @@ def _dataexport_status(mods_data: Path) -> SourceStatus:
                 "active_transport_lines",
                 "ActiveTransportLines",
             ),
+            "transit_hotspots": _extract_transit_hotspots(transit_detail),
         },
     )
 
@@ -110,7 +114,7 @@ def _save_investigator_status(output_root: Path) -> SourceStatus:
         )
     city_state = _read_json(latest / "city-state-report-facts.json") or {}
     transport = _read_json(latest / "transport-report-facts.json") or {}
-    line_groups = transport.get("lineGroups") if isinstance(transport, dict) else None
+    line_groups = _first_present(transport, "lineGroups", "LineGroups") if isinstance(transport, dict) else None
     return SourceStatus(
         name="saveinvestigator",
         label="Save Investigator",
@@ -120,8 +124,13 @@ def _save_investigator_status(output_root: Path) -> SourceStatus:
         message="Save Investigator output is available.",
         summary={
             "latest_output": path_str(latest),
-            "estimated_completion_percent": _as_dict(city_state).get("estimatedCompletionPercent"),
+            "estimated_completion_percent": _first_present(
+                _as_dict(city_state),
+                "estimatedCompletionPercent",
+                "EstimatedCompletionPercent",
+            ),
             "transport_line_group_count": len(line_groups) if isinstance(line_groups, list) else None,
+            "transit_line_names": _extract_transit_line_names(line_groups),
         },
     )
 
@@ -154,3 +163,66 @@ def _first_present(payload: dict[str, Any], *keys: str) -> Any:
         if key in payload:
             return payload[key]
     return None
+
+
+def _extract_transit_hotspots(transit_detail: dict[str, Any]) -> list[dict[str, Any]]:
+    lines = _first_present(transit_detail, "lines", "Lines")
+    if not isinstance(lines, list):
+        return []
+    hotspots: list[dict[str, Any]] = []
+    for line in lines:
+        if not isinstance(line, dict):
+            continue
+        waiting = _first_present(line, "waiting_passengers_all_stops", "WaitingPassengersAllStops")
+        if not isinstance(waiting, (int, float)) or waiting <= 0:
+            continue
+        hotspots.append(
+            {
+                "route_number": _first_present(line, "route_number", "RouteNumber"),
+                "mode": _first_present(line, "mode", "Mode"),
+                "color": _normalize_color(_first_present(line, "line_color", "LineColor")),
+                "fallback_name": _first_present(line, "line_name", "LineName", "LineIdentifier"),
+                "waiting_passengers": waiting,
+                "max_waiting_at_stop": _first_present(
+                    line,
+                    "max_waiting_passengers_at_stop",
+                    "MaxWaitingPassengersAtStop",
+                ),
+            }
+        )
+    hotspots.sort(key=lambda item: float(item.get("waiting_passengers") or 0), reverse=True)
+    return hotspots[:5]
+
+
+def _extract_transit_line_names(line_groups: object) -> dict[str, str]:
+    if not isinstance(line_groups, list):
+        return {}
+    names: dict[str, str] = {}
+    for group in line_groups:
+        if not isinstance(group, dict):
+            continue
+        lines = _first_present(group, "lines", "Lines")
+        if not isinstance(lines, list):
+            continue
+        for line in lines:
+            if not isinstance(line, dict):
+                continue
+            display_name = _first_present(line, "displayName", "DisplayName")
+            route_number = _first_present(line, "routeNumber", "RouteNumber")
+            color = _normalize_color(_first_present(line, "colorHex", "ColorHex"))
+            if display_name and route_number is not None and color:
+                names[_line_key(route_number, color)] = str(display_name)
+    return names
+
+
+def _line_key(route_number: object, color: str) -> str:
+    return f"{route_number}|{color.upper()}"
+
+
+def _normalize_color(value: object) -> str:
+    if not isinstance(value, str):
+        return ""
+    color = value.strip().upper()
+    if color and not color.startswith("#"):
+        color = f"#{color}"
+    return color
