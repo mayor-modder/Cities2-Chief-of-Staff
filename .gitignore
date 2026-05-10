@@ -10,4 +10,5 @@ build/
 bin/
 obj/
 reports/
+city-report-*.md
 tmp/

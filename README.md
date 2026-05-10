@@ -37,12 +37,25 @@ Build a report:
 python -m cityadvisor.cli analyze
 ```
 
+`analyze` refreshes Save Investigator before building the report when
+`tools/SaveInvestigator/SaveInvestigator.csproj` is available. This keeps
+agent-generated reports from silently using stale save evidence. Use
+`status` when you only want to inspect currently detected evidence without
+running a new save investigation.
+
 Use explicit paths:
 
 ```powershell
 python -m cityadvisor.cli analyze `
   --mods-data "$env:USERPROFILE\AppData\LocalLow\Colossal Order\Cities Skylines II\ModsData" `
+  --save-path "$env:USERPROFILE\AppData\LocalLow\Colossal Order\Cities Skylines II\Saves\<steam-id>\<save>.cok" `
   --save-investigator-output "C:\path\to\SaveInvestigator\output"
+```
+
+Use an existing Save Investigator output without refreshing:
+
+```powershell
+python -m cityadvisor.cli analyze --skip-save-investigator-refresh
 ```
 
 Print JSON:
@@ -62,8 +75,8 @@ python -m cityadvisor.mcp_server
 Available MCP tools:
 
 - `cityadvisor_get_status`
-- `cityadvisor_analyze_city`
-- `cityadvisor_get_report`
+- `cityadvisor_analyze_city` refreshes Save Investigator first
+- `cityadvisor_get_report` refreshes Save Investigator first
 
 Example MCP config:
 

@@ -39,3 +39,10 @@ def default_save_investigator_output_dir() -> Path:
         if candidate.exists():
             return candidate
     return candidates[0]
+
+
+def default_save_investigator_project_path() -> Path:
+    env = os.environ.get("CITYADVISOR_SAVE_INVESTIGATOR_PROJECT")
+    if env:
+        return Path(env).expanduser()
+    return Path.cwd() / "tools" / "SaveInvestigator" / "SaveInvestigator.csproj"

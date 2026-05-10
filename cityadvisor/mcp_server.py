@@ -9,9 +9,11 @@ from typing import Any
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from cityadvisor.analysis import build_city_report
+    from cityadvisor.save_investigator import SaveInvestigatorRefreshError, refresh_save_investigator_output
     from cityadvisor.sources import discover_sources
 else:
     from .analysis import build_city_report
+    from .save_investigator import SaveInvestigatorRefreshError, refresh_save_investigator_output
     from .sources import discover_sources
 
 JSON = dict[str, Any]
@@ -58,13 +60,31 @@ def tools_catalog() -> list[JSON]:
         },
         {
             "name": "cityadvisor_analyze_city",
-            "description": "Analyze available city evidence and return a structured CityAdvisor report.",
-            "inputSchema": {"type": "object", "properties": {}},
+            "description": "Refresh Save Investigator, then analyze available city evidence and return a structured CityAdvisor report.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "mods_data_dir": {"type": "string"},
+                    "save_path": {"type": "string"},
+                    "save_investigator_project": {"type": "string"},
+                    "save_investigator_output_dir": {"type": "string"},
+                    "skip_save_investigator_refresh": {"type": "boolean"},
+                },
+            },
         },
         {
             "name": "cityadvisor_get_report",
-            "description": "Return the current CityAdvisor report as Markdown.",
-            "inputSchema": {"type": "object", "properties": {}},
+            "description": "Refresh Save Investigator, then return the current CityAdvisor report as Markdown.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "mods_data_dir": {"type": "string"},
+                    "save_path": {"type": "string"},
+                    "save_investigator_project": {"type": "string"},
+                    "save_investigator_output_dir": {"type": "string"},
+                    "skip_save_investigator_refresh": {"type": "boolean"},
+                },
+            },
         },
     ]
 
@@ -72,18 +92,57 @@ def tools_catalog() -> list[JSON]:
 def _handle_tool_call(req_id: object, params: JSON, config: JSON) -> JSON:
     name = str(params.get("name", ""))
     args = params.get("arguments") if isinstance(params.get("arguments"), dict) else {}
-    inventory = discover_sources(
-        mods_data_dir=args.get("mods_data_dir") or config.get("mods_data_dir"),
-        save_investigator_output_dir=args.get("save_investigator_output_dir")
-        or config.get("save_investigator_output_dir"),
-    )
     if name == "cityadvisor_get_status":
+        inventory = _discover_sources(args, config, refresh_save_investigator=False)
         return {"jsonrpc": "2.0", "id": req_id, "result": _text_result(inventory.to_dict())}
     if name == "cityadvisor_analyze_city":
+        try:
+            inventory = _discover_sources(args, config, refresh_save_investigator=True)
+        except ValueError as exception:
+            return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32000, "message": str(exception)}}
         return {"jsonrpc": "2.0", "id": req_id, "result": _text_result(build_city_report(inventory).to_dict())}
     if name == "cityadvisor_get_report":
+        try:
+            inventory = _discover_sources(args, config, refresh_save_investigator=True)
+        except ValueError as exception:
+            return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32000, "message": str(exception)}}
         return {"jsonrpc": "2.0", "id": req_id, "result": _text_result(build_city_report(inventory).markdown)}
     return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32602, "message": f"Unknown tool: {name}"}}
+
+
+def _discover_sources(args: JSON, config: JSON, *, refresh_save_investigator: bool) -> object:
+    mods_data_dir = args.get("mods_data_dir") or config.get("mods_data_dir")
+    save_investigator_output_dir = args.get("save_investigator_output_dir") or config.get(
+        "save_investigator_output_dir"
+    )
+    skip_refresh = (
+        args["skip_save_investigator_refresh"]
+        if "skip_save_investigator_refresh" in args
+        else config.get("skip_save_investigator_refresh")
+    )
+    if refresh_save_investigator and not _truthy(skip_refresh):
+        try:
+            refreshed = refresh_save_investigator_output(
+                project_path=args.get("save_investigator_project") or config.get("save_investigator_project"),
+                save_path=args.get("save_path") or config.get("save_path"),
+            )
+        except SaveInvestigatorRefreshError as exception:
+            raise ValueError(str(exception)) from exception
+        if refreshed.output_root is not None:
+            save_investigator_output_dir = refreshed.output_root
+
+    return discover_sources(
+        mods_data_dir=mods_data_dir,
+        save_investigator_output_dir=save_investigator_output_dir,
+    )
+
+
+def _truthy(value: object) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(value)
 
 
 def _text_result(payload: object) -> JSON:
@@ -97,11 +156,17 @@ def _text_result(payload: object) -> JSON:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=SERVER_NAME)
     parser.add_argument("--mods-data")
+    parser.add_argument("--save-path")
+    parser.add_argument("--save-investigator-project")
     parser.add_argument("--save-investigator-output")
+    parser.add_argument("--skip-save-investigator-refresh", action="store_true")
     args = parser.parse_args(argv)
     config = {
         "mods_data_dir": args.mods_data,
+        "save_path": args.save_path,
+        "save_investigator_project": args.save_investigator_project,
         "save_investigator_output_dir": args.save_investigator_output,
+        "skip_save_investigator_refresh": args.skip_save_investigator_refresh,
     }
     while True:
         message = _read_message()
