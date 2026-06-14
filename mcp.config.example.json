@@ -6,6 +6,10 @@
         "<REPO_ROOT>/cityadvisor/mcp_server.py",
         "--mods-data",
         "<MODS_DATA_DIR>",
+        "--save-path",
+        "<SAVE_FILE.cok>",
+        "--save-investigator-project",
+        "<REPO_ROOT>/tools/SaveInvestigator/SaveInvestigator.csproj",
         "--save-investigator-output",
         "<SAVE_INVESTIGATOR_OUTPUT_DIR>"
       ]
