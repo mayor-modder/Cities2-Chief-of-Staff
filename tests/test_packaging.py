@@ -186,7 +186,9 @@ class PackagingTests(unittest.TestCase):
             self.assertEqual(exit_code, 1)
             self.assertIn("generated artifacts differ from canonical sources", output)
             self.assertIn("canonical sources", output)
-            self.assertIn("generated package: dist/plugins/cities2-chief-of-staff", output)
+            self.assertIn("generated packages:", output)
+            self.assertIn("dist/plugins/cities2-chief-of-staff", output)
+            self.assertIn("dist/plugins/cities2-chief-of-staff-claude", output)
             self.assertIn("python -m chief_of_staff.plugin_packages sync", output)
             self.assertIn(str(stale_metadata), output)
 

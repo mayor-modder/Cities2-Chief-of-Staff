@@ -186,13 +186,17 @@ def sync_catalog_package(
 ) -> tuple[Path, ...]:
     root = Path(repo_root).resolve()
     catalog = Path(catalog_root).resolve()
-    changed: list[Path] = []
+    platforms = tuple(platforms)
+
     for platform in platforms:
         marketplace = catalog / platform.catalog_marketplace_rel
         if not marketplace.is_file():
             raise FileNotFoundError(f"Catalog marketplace not found: {marketplace}")
 
-        sync_packages(root, package_roots=(platform.dist_package_root,))
+    sync_packages(root, package_roots=tuple(platform.dist_package_root for platform in platforms))
+
+    changed: list[Path] = []
+    for platform in platforms:
         source = root / platform.dist_package_root
         target = catalog / platform.catalog_package_root
         if not target.resolve().is_relative_to(catalog):
@@ -346,8 +350,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     repo_root = Path(args.repo_root)
+    platforms = PLATFORMS if args.target == "all" else (PLATFORMS_BY_KEY[args.target],)
+    selected_roots = tuple(platform.dist_package_root for platform in platforms)
+
     if args.command == "sync":
-        changed = sync_packages(repo_root)
+        changed = sync_packages(repo_root, package_roots=selected_roots)
         if changed:
             print("Updated generated plugin package artifacts:")
             for path in changed:
@@ -357,7 +364,6 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "sync-catalog":
-        platforms = PLATFORMS if args.target == "all" else (PLATFORMS_BY_KEY[args.target],)
         changed = sync_catalog_package(args.catalog_root, repo_root=repo_root, platforms=platforms)
         if changed:
             print("Updated catalog plugin package artifacts:")
@@ -367,14 +373,14 @@ def main(argv: list[str] | None = None) -> int:
             print("Catalog plugin package is in sync.")
         return 0
 
-    stale = check_packages(repo_root)
+    stale = check_packages(repo_root, package_roots=selected_roots)
     if not stale:
         print("Plugin package payloads are in sync.")
         return 0
 
     print("Plugin package generated artifacts differ from canonical sources.")
     print("Canonical sources: chief_of_staff/plugin_metadata.py, skills/cities2-chief-of-staff, chief_of_staff")
-    print("generated package: dist/plugins/cities2-chief-of-staff")
+    print("generated packages: " + ", ".join(platform.dist_package_root.as_posix() for platform in PLATFORMS))
     print("Run: python -m chief_of_staff.plugin_packages sync")
     print("Stale paths:")
     for path in stale:
