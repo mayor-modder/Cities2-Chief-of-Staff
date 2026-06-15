@@ -6,8 +6,8 @@
     "name": "mayor-modder",
     "url": "https://github.com/mayor-modder"
   },
-  "homepage": "https://github.com/mayor-modder/Cities2-ChiefOfStaff",
-  "repository": "https://github.com/mayor-modder/Cities2-ChiefOfStaff",
+  "homepage": "https://github.com/mayor-modder/Cities2-Chief-of-Staff",
+  "repository": "https://github.com/mayor-modder/Cities2-Chief-of-Staff",
   "license": "MIT",
   "keywords": [
     "cities-skylines-ii",
@@ -27,9 +27,9 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/mayor-modder/Cities2-ChiefOfStaff",
-    "privacyPolicyURL": "https://github.com/mayor-modder/Cities2-ChiefOfStaff/blob/main/PRIVACY.md",
-    "termsOfServiceURL": "https://github.com/mayor-modder/Cities2-ChiefOfStaff#license",
+    "websiteURL": "https://github.com/mayor-modder/Cities2-Chief-of-Staff",
+    "privacyPolicyURL": "https://github.com/mayor-modder/Cities2-Chief-of-Staff/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/mayor-modder/Cities2-Chief-of-Staff#license",
     "defaultPrompt": [
       "Brief me on my city like the mayor.",
       "What evidence sources are available for my city?",

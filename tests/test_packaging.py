@@ -38,7 +38,7 @@ class PackagingTests(unittest.TestCase):
         self.assertEqual(plugin["interface"]["brandColor"], "#1F6F78")
         self.assertEqual(
             plugin["interface"]["privacyPolicyURL"],
-            "https://github.com/mayor-modder/Cities2-ChiefOfStaff/blob/main/PRIVACY.md",
+            "https://github.com/mayor-modder/Cities2-Chief-of-Staff/blob/main/PRIVACY.md",
         )
         self.assertIn("defaultPrompt", plugin["interface"])
 

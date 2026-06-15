@@ -12,7 +12,7 @@ does not send game data to the maintainers. See [PRIVACY.md](PRIVACY.md).
 In your system terminal, add this repository as a Codex plugin marketplace:
 
 ```sh
-codex plugin marketplace add mayor-modder/Cities2-ChiefOfStaff
+codex plugin marketplace add mayor-modder/Cities2-Chief-of-Staff
 ```
 
 Then start Codex from the folder where you want to work:
@@ -28,7 +28,7 @@ Enter `/plugin`, install **Cities2 Chief of Staff**, then restart Codex.
 1. Open the Codex app and choose **Plugins** from the sidebar.
 2. Next to the "Search plugins" input, click **Built by OpenAI**.
 3. Click **+ Add more**.
-4. Enter source `mayor-modder/Cities2-ChiefOfStaff` and click **Add Marketplace**.
+4. Enter source `mayor-modder/Cities2-Chief-of-Staff` and click **Add Marketplace**.
 5. Install and enable **Cities2 Chief of Staff**.
 6. Fully exit Codex and restart.
 

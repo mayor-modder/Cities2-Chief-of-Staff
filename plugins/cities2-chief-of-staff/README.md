@@ -13,5 +13,5 @@ and tool outputs according to your settings. See the repository `PRIVACY.md`.
 Install from this repository marketplace:
 
 ```sh
-codex plugin marketplace add mayor-modder/Cities2-ChiefOfStaff
+codex plugin marketplace add mayor-modder/Cities2-Chief-of-Staff
 ```
