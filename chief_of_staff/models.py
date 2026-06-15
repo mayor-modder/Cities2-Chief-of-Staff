@@ -10,6 +10,7 @@ class SourceStatus:
     name: str
     label: str
     available: bool
+    coverage_state: str
     path: str
     kind: str
     message: str
