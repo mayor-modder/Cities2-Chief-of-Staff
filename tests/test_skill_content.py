@@ -31,6 +31,21 @@ class SkillContentTests(unittest.TestCase):
             normalized,
         )
 
+    def test_skill_teaches_companion_mod_install_help(self) -> None:
+        text = SKILL.read_text(encoding="utf-8")
+        normalized = " ".join(text.split())
+
+        self.assertIn("https://github.com/mayor-modder/Cities2-DataExport", text)
+        self.assertIn("https://github.com/mayor-modder/Cities2-InfoLoomBridge", text)
+        self.assertIn("CS2DataExport.csproj", text)
+        self.assertIn("InfoLoomBridge.csproj", text)
+        self.assertIn("DOTNET_ROLL_FORWARD", text)
+        self.assertIn("Remove-Item", text)
+        self.assertIn("dotnet build", text)
+        self.assertIn("ModsData/CS2DataExport/latest.json", text)
+        self.assertIn("ModsData/InfoLoomBridge/latest.json", text)
+        self.assertIn("Do not tell users to enable the local mod in the mod list", normalized)
+
     def test_skill_test_evidence_records_baseline_and_post_skill_sections(self) -> None:
         text = EVIDENCE.read_text(encoding="utf-8")
 

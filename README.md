@@ -2,7 +2,7 @@
 
 Cities2-Chief-of-Staff is a local mayoral chief-of-staff analysis layer for Cities: Skylines II city evidence.
 
-It is separate from:
+It is separate from, but complementary to:
 
 - [`Cities2-MCP`](https://github.com/mayor-modder/Cities2-MCP), which is for wiki knowledge and mod project workflows
 - [`Cities2-DataExport`](https://github.com/mayor-modder/Cities2-DataExport), which is an in-game mod that writes city snapshots

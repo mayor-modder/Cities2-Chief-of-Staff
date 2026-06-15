@@ -29,6 +29,27 @@ when available.
 5. Treat Cities2-DataExport, Cities2-InfoLoomBridge, and Save Investigator as
    separate evidence sources with separate confidence.
 
+## Companion Mod Install Help
+
+When the user wants better Chief of Staff evidence, help install either
+companion mod from its public repo:
+
+| Mod | Repo | Project | Verifies |
+| --- | --- | --- | --- |
+| Cities2-DataExport | https://github.com/mayor-modder/Cities2-DataExport | `CS2DataExport.csproj` | `ModsData/CS2DataExport/latest.json` |
+| Cities2-InfoLoomBridge | https://github.com/mayor-modder/Cities2-InfoLoomBridge | `InfoLoomBridge.csproj` | `ModsData/InfoLoomBridge/latest.json` |
+
+Use PowerShell instructions. Tell the user to close Cities: Skylines II, find
+the project file under the extracted repo, set `DOTNET_ROLL_FORWARD=Major`,
+clear `obj` and `bin` with `Remove-Item`, then run `dotnet build <project> -c
+Release -p:LangVersion=latest`. The Cities: Skylines II mod toolchain copies
+the local build into the user's Mods folder. Do not tell users to enable the
+local mod in the mod list.
+
+InfoLoomBridge also needs InfoLoom or InfoLoom Two installed. If it cannot use
+InfoLoom, it can still write `latest.json` with `status: "error"` and a
+diagnostic message.
+
 ## Briefing Format
 
 Use concise sections:
