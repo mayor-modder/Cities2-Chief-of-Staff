@@ -11,6 +11,8 @@ from .paths import default_mods_data_dir, default_save_investigator_output_dir
 def discover_sources(
     mods_data_dir: Path | str | None = None,
     save_investigator_output_dir: Path | str | None = None,
+    *,
+    use_existing_save_investigator_output: bool = True,
 ) -> SourceInventory:
     mods_data = Path(mods_data_dir).expanduser() if mods_data_dir is not None else default_mods_data_dir()
     save_output = (
@@ -21,7 +23,7 @@ def discover_sources(
     return SourceInventory(
         [
             _dataexport_status(mods_data),
-            _save_investigator_status(save_output),
+            _save_investigator_status(save_output, use_existing_output=use_existing_save_investigator_output),
             _infoloom_status(mods_data),
         ]
     )
@@ -35,6 +37,7 @@ def _dataexport_status(mods_data: Path) -> SourceStatus:
             name="dataexport",
             label="Cities2-DataExport",
             available=False,
+            coverage_state="missing",
             path=path_str(path),
             kind="live_sample",
             message="No DataExport latest.json found.",
@@ -55,6 +58,7 @@ def _dataexport_status(mods_data: Path) -> SourceStatus:
         name="dataexport",
         label="Cities2-DataExport",
         available=True,
+        coverage_state="usable",
         path=path_str(path),
         kind="live_sample",
         message="DataExport latest.json is available.",
@@ -81,6 +85,7 @@ def _infoloom_status(mods_data: Path) -> SourceStatus:
             name="infoloombridge",
             label="Cities2-InfoLoomBridge",
             available=False,
+            coverage_state="missing",
             path=path_str(path),
             kind="optional_live_detail",
             message="No InfoLoomBridge latest.json found.",
@@ -90,6 +95,7 @@ def _infoloom_status(mods_data: Path) -> SourceStatus:
         name="infoloombridge",
         label="Cities2-InfoLoomBridge",
         available=True,
+        coverage_state="usable",
         path=path_str(path),
         kind="optional_live_detail",
         message="InfoLoomBridge latest.json is available.",
@@ -101,13 +107,24 @@ def _infoloom_status(mods_data: Path) -> SourceStatus:
     )
 
 
-def _save_investigator_status(output_root: Path) -> SourceStatus:
+def _save_investigator_status(output_root: Path, *, use_existing_output: bool) -> SourceStatus:
+    if not use_existing_output:
+        return SourceStatus(
+            name="saveinvestigator",
+            label="Save Investigator",
+            available=False,
+            coverage_state="missing",
+            path=path_str(output_root),
+            kind="save_analysis",
+            message="Save Investigator refresh did not produce a fresh output.",
+        )
     latest = _latest_child_dir(output_root)
     if latest is None:
         return SourceStatus(
             name="saveinvestigator",
             label="Save Investigator",
             available=False,
+            coverage_state="missing",
             path=path_str(output_root),
             kind="save_analysis",
             message="No Save Investigator output directory found.",
@@ -119,6 +136,7 @@ def _save_investigator_status(output_root: Path) -> SourceStatus:
         name="saveinvestigator",
         label="Save Investigator",
         available=True,
+        coverage_state="usable",
         path=path_str(latest),
         kind="save_analysis",
         message="Save Investigator output is available.",

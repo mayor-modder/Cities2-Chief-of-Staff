@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class EntrypointTests(unittest.TestCase):
     def test_mcp_server_runs_when_launched_by_file_path(self) -> None:
         proc = subprocess.Popen(
-            [sys.executable, str(ROOT / "cityadvisor" / "mcp_server.py")],
+            [sys.executable, str(ROOT / "chief_of_staff" / "mcp_server.py")],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -31,6 +31,11 @@ class EntrypointTests(unittest.TestCase):
             proc.stdin.flush()
             header = proc.stdout.readline().decode("ascii")
             self.assertTrue(header.startswith("Content-Length:"), header)
+            content_length = int(header.split(":", 1)[1].strip())
+            self.assertEqual(proc.stdout.readline(), b"\r\n")
+            body = proc.stdout.read(content_length)
+            response = json.loads(body.decode("utf-8"))
+            self.assertEqual(response["result"]["serverInfo"]["name"], "Cities2-ChiefOfStaff")
         finally:
             proc.terminate()
             proc.wait(timeout=5)

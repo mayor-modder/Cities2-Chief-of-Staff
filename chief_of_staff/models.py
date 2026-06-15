@@ -10,6 +10,7 @@ class SourceStatus:
     name: str
     label: str
     available: bool
+    coverage_state: str
     path: str
     kind: str
     message: str
@@ -39,6 +40,7 @@ class SourceInventory:
 class CityReport:
     city_name: str
     evidence_sources: list[str]
+    missing_sources: list[str]
     missing_optional_sources: list[str]
     markdown: str
     facts: dict[str, Any] = field(default_factory=dict)

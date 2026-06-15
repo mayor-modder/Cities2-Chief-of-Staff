@@ -3,17 +3,17 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cities2-cityadvisor"
+name = "cities2-chief-of-staff"
 version = "0.1.0"
-description = "Local Cities: Skylines II city evidence analysis tools."
+description = "Local Cities: Skylines II mayoral chief-of-staff analysis tools."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "mayor-modder" }]
 
 [project.scripts]
-cityadvisor = "cityadvisor.cli:main"
-cityadvisor-mcp = "cityadvisor.mcp_server:main"
+chief-of-staff = "chief_of_staff.cli:main"
+chief-of-staff-mcp = "chief_of_staff.mcp_server:main"
 
 [tool.setuptools.packages.find]
-include = ["cityadvisor*"]
+include = ["chief_of_staff*"]

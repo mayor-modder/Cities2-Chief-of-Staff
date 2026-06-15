@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from cityadvisor.analysis import build_city_report
-from cityadvisor.sources import discover_sources
+from chief_of_staff.analysis import build_city_report
+from chief_of_staff.sources import discover_sources
 
 
 class SourceDiscoveryTests(unittest.TestCase):
@@ -76,10 +76,56 @@ class SourceDiscoveryTests(unittest.TestCase):
             report = build_city_report(inventory)
 
         self.assertEqual(report.city_name, "Evergreen Bay")
+        self.assertIn("# Chief of Staff Brief", report.markdown)
         self.assertIn("dataexport", report.evidence_sources)
         self.assertIn("infoloombridge", report.missing_optional_sources)
         self.assertIn("Population: 173,422", report.markdown)
         self.assertIn("Active transport lines: 214", report.markdown)
+
+    def test_reports_evidence_coverage_for_missing_optional_companions(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            mods_data = Path(tmp) / "ModsData"
+            dataexport = mods_data / "CS2DataExport"
+            dataexport.mkdir(parents=True)
+            (dataexport / "latest.json").write_text(
+                json.dumps(
+                    {
+                        "City": {"CityName": "Coverage City"},
+                        "Population": {"TotalPopulation": 50000},
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            inventory = discover_sources(mods_data_dir=mods_data)
+            report = build_city_report(inventory)
+
+        by_name = {source.name: source.to_dict() for source in inventory.sources}
+        self.assertEqual(by_name["dataexport"]["coverage_state"], "usable")
+        self.assertEqual(by_name["saveinvestigator"]["coverage_state"], "missing")
+        self.assertEqual(by_name["infoloombridge"]["coverage_state"], "missing")
+        self.assertIn("## Evidence Coverage", report.markdown)
+        self.assertIn("- Cities2-DataExport: usable", report.markdown)
+        self.assertIn("- Save Investigator: missing", report.markdown)
+        self.assertIn("- Cities2-InfoLoomBridge: missing", report.markdown)
+        self.assertIn("Missing Save Investigator limits save-derived diagnosis.", report.markdown)
+        self.assertIn("Missing Cities2-InfoLoomBridge limits detailed InfoLoom-derived diagnosis.", report.markdown)
+
+    def test_report_distinguishes_all_missing_sources_from_optional_missing_sources(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            inventory = discover_sources(mods_data_dir=Path(tmp) / "ModsData")
+            report = build_city_report(inventory)
+
+        self.assertEqual(
+            report.missing_sources,
+            ["dataexport", "saveinvestigator", "infoloombridge"],
+        )
+        self.assertEqual(
+            report.missing_optional_sources,
+            ["dataexport", "saveinvestigator", "infoloombridge"],
+        )
+        payload = report.to_dict()
+        self.assertEqual(payload["missing_sources"], report.missing_sources)
 
     def test_reads_power_shell_utf8_json_with_bom(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

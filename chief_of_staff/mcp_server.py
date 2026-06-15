@@ -8,19 +8,22 @@ from typing import Any
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from cityadvisor.analysis import build_city_report
-    from cityadvisor.save_investigator import SaveInvestigatorRefreshError, refresh_save_investigator_output
-    from cityadvisor.sources import discover_sources
+    from chief_of_staff import __version__
+    from chief_of_staff.analysis import build_city_report
+    from chief_of_staff.save_investigator import SaveInvestigatorRefreshError, refresh_save_investigator_output
+    from chief_of_staff.sources import discover_sources
 else:
+    from . import __version__
     from .analysis import build_city_report
     from .save_investigator import SaveInvestigatorRefreshError, refresh_save_investigator_output
     from .sources import discover_sources
 
 JSON = dict[str, Any]
-SERVER_NAME = "Cities2-CityAdvisor"
+SERVER_NAME = "Cities2-ChiefOfStaff"
 SERVER_INSTRUCTIONS = (
-    "Cities2-CityAdvisor analyzes available Cities: Skylines II city evidence. "
-    "It works without optional mods, and becomes more useful when Cities2-DataExport, "
+    "Cities2-ChiefOfStaff analyzes available Cities: Skylines II city evidence "
+    "as the Mayor's office Chief of Staff. It works without optional companion "
+    "mods, and becomes more useful when Cities2-DataExport, "
     "Cities2-InfoLoomBridge, or Save Investigator outputs are available."
 )
 
@@ -35,7 +38,7 @@ def handle_request(message: JSON, config: JSON) -> JSON | None:
             "id": req_id,
             "result": {
                 "protocolVersion": "2025-06-18",
-                "serverInfo": {"name": SERVER_NAME, "version": "0.1.0"},
+                "serverInfo": {"name": SERVER_NAME, "version": __version__},
                 "capabilities": {"tools": {"listChanged": False}},
                 "instructions": SERVER_INSTRUCTIONS,
             },
@@ -54,13 +57,13 @@ def handle_request(message: JSON, config: JSON) -> JSON | None:
 def tools_catalog() -> list[JSON]:
     return [
         {
-            "name": "cityadvisor_get_status",
-            "description": "List detected Cities: Skylines II city evidence sources.",
+            "name": "chief_of_staff_get_status",
+            "description": "List detected Cities: Skylines II city evidence sources for the Chief of Staff.",
             "inputSchema": {"type": "object", "properties": {}},
         },
         {
-            "name": "cityadvisor_analyze_city",
-            "description": "Refresh Save Investigator, then analyze available city evidence and return a structured CityAdvisor report.",
+            "name": "chief_of_staff_analyze_city",
+            "description": "Refresh Save Investigator, then analyze available city evidence and return a structured Chief of Staff report.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -73,8 +76,8 @@ def tools_catalog() -> list[JSON]:
             },
         },
         {
-            "name": "cityadvisor_get_report",
-            "description": "Refresh Save Investigator, then return the current CityAdvisor report as Markdown.",
+            "name": "chief_of_staff_get_report",
+            "description": "Refresh Save Investigator, then return the current Chief of Staff brief as Markdown.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -92,16 +95,16 @@ def tools_catalog() -> list[JSON]:
 def _handle_tool_call(req_id: object, params: JSON, config: JSON) -> JSON:
     name = str(params.get("name", ""))
     args = params.get("arguments") if isinstance(params.get("arguments"), dict) else {}
-    if name == "cityadvisor_get_status":
+    if name == "chief_of_staff_get_status":
         inventory = _discover_sources(args, config, refresh_save_investigator=False)
         return {"jsonrpc": "2.0", "id": req_id, "result": _text_result(inventory.to_dict())}
-    if name == "cityadvisor_analyze_city":
+    if name == "chief_of_staff_analyze_city":
         try:
             inventory = _discover_sources(args, config, refresh_save_investigator=True)
         except ValueError as exception:
             return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32000, "message": str(exception)}}
         return {"jsonrpc": "2.0", "id": req_id, "result": _text_result(build_city_report(inventory).to_dict())}
-    if name == "cityadvisor_get_report":
+    if name == "chief_of_staff_get_report":
         try:
             inventory = _discover_sources(args, config, refresh_save_investigator=True)
         except ValueError as exception:
@@ -115,6 +118,7 @@ def _discover_sources(args: JSON, config: JSON, *, refresh_save_investigator: bo
     save_investigator_output_dir = args.get("save_investigator_output_dir") or config.get(
         "save_investigator_output_dir"
     )
+    use_existing_save_investigator_output = True
     skip_refresh = (
         args["skip_save_investigator_refresh"]
         if "skip_save_investigator_refresh" in args
@@ -130,10 +134,13 @@ def _discover_sources(args: JSON, config: JSON, *, refresh_save_investigator: bo
             raise ValueError(str(exception)) from exception
         if refreshed.output_root is not None:
             save_investigator_output_dir = refreshed.output_root
+        else:
+            use_existing_save_investigator_output = False
 
     return discover_sources(
         mods_data_dir=mods_data_dir,
         save_investigator_output_dir=save_investigator_output_dir,
+        use_existing_save_investigator_output=use_existing_save_investigator_output,
     )
 
 
@@ -160,7 +167,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--save-investigator-project")
     parser.add_argument("--save-investigator-output")
     parser.add_argument("--skip-save-investigator-refresh", action="store_true")
+    parser.add_argument("--version", action="store_true")
     args = parser.parse_args(argv)
+    if args.version:
+        print(f"cities2-chief-of-staff {__version__}")
+        return 0
     config = {
         "mods_data_dir": args.mods_data,
         "save_path": args.save_path,

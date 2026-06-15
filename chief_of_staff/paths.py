@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 def default_mods_data_dir() -> Path:
-    env = os.environ.get("CITIES2_MODS_DATA_DIR")
+    env = os.environ.get("CHIEF_OF_STAFF_MODS_DATA_DIR")
     if env:
         return Path(env).expanduser()
     if os.name == "nt":
@@ -26,7 +26,7 @@ def default_mods_data_dir() -> Path:
 
 
 def default_save_investigator_output_dir() -> Path:
-    env = os.environ.get("CITYADVISOR_SAVE_INVESTIGATOR_OUTPUT_DIR")
+    env = os.environ.get("CHIEF_OF_STAFF_SAVE_INVESTIGATOR_OUTPUT_DIR")
     if env:
         return Path(env).expanduser()
     tool_root = Path.cwd() / "tools" / "SaveInvestigator"
@@ -42,7 +42,7 @@ def default_save_investigator_output_dir() -> Path:
 
 
 def default_save_investigator_project_path() -> Path:
-    env = os.environ.get("CITYADVISOR_SAVE_INVESTIGATOR_PROJECT")
+    env = os.environ.get("CHIEF_OF_STAFF_SAVE_INVESTIGATOR_PROJECT")
     if env:
         return Path(env).expanduser()
     return Path.cwd() / "tools" / "SaveInvestigator" / "SaveInvestigator.csproj"

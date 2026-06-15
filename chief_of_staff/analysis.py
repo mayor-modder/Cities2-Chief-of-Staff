@@ -14,13 +14,12 @@ def build_city_report(inventory: SourceInventory) -> CityReport:
         "Unknown city",
     )
     facts: dict[str, Any] = {}
-    lines = ["# CityAdvisor Report", ""]
+    lines = ["# Chief of Staff Brief", ""]
     lines.append(f"City: {city_name}")
     lines.append("")
-    lines.append("## Evidence")
+    lines.append("## Evidence Coverage")
     for source in inventory.sources:
-        state = "available" if source.available else "missing"
-        lines.append(f"- {source.label}: {state}")
+        lines.append(f"- {source.label}: {source.coverage_state}")
     lines.append("")
     lines.append("## Summary")
 
@@ -57,19 +56,28 @@ def build_city_report(inventory: SourceInventory) -> CityReport:
                 lines.append(f"- {name}: {waiting:,} waiting, max stop {max_stop:,}")
 
     lines.append("")
-    lines.append("## Next Useful Evidence")
-    missing_optional = [source.name for source in inventory.sources if not source.available and source.name != "dataexport"]
-    if missing_optional:
-        for source in inventory.sources:
-            if source.name in missing_optional:
-                lines.append(f"- {source.label}: {source.message}")
+    lines.append("## Confidence Notes")
+    missing_sources = [source for source in inventory.sources if not source.available]
+    if missing_sources:
+        for source in missing_sources:
+            if source.name == "saveinvestigator":
+                lines.append("- Missing Save Investigator limits save-derived diagnosis.")
+            elif source.name == "dataexport":
+                lines.append("- Missing Cities2-DataExport limits live city sample diagnosis.")
+            elif source.name == "infoloombridge":
+                lines.append("- Missing Cities2-InfoLoomBridge limits detailed InfoLoom-derived diagnosis.")
+            else:
+                lines.append(f"- Missing {source.label}: {source.message}")
     else:
-        lines.append("- All known optional evidence sources are available.")
+        lines.append("- All known evidence sources are usable.")
+
+    missing_source_names = [source.name for source in missing_sources]
 
     return CityReport(
         city_name=city_name,
         evidence_sources=[source.name for source in inventory.available_sources],
-        missing_optional_sources=missing_optional,
+        missing_sources=missing_source_names,
+        missing_optional_sources=missing_source_names,
         markdown="\n".join(lines).strip() + "\n",
         facts=facts,
     )

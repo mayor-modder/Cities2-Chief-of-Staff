@@ -7,21 +7,21 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from cityadvisor.mcp_server import handle_request
+from chief_of_staff.mcp_server import handle_request
 from tests.save_investigator_fake import write_fake_dotnet
 
 
 class McpServerTests(unittest.TestCase):
-    def test_lists_cityadvisor_tools(self) -> None:
+    def test_lists_chief_of_staff_tools(self) -> None:
         response = handle_request({"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}, {})
         names = [tool["name"] for tool in response["result"]["tools"]]
 
         self.assertEqual(
             names,
             [
-                "cityadvisor_get_status",
-                "cityadvisor_analyze_city",
-                "cityadvisor_get_report",
+                "chief_of_staff_get_status",
+                "chief_of_staff_analyze_city",
+                "chief_of_staff_get_report",
             ],
         )
 
@@ -41,7 +41,7 @@ class McpServerTests(unittest.TestCase):
                     "jsonrpc": "2.0",
                     "id": 2,
                     "method": "tools/call",
-                    "params": {"name": "cityadvisor_analyze_city", "arguments": {}},
+                    "params": {"name": "chief_of_staff_analyze_city", "arguments": {}},
                 },
                 config,
             )
@@ -109,13 +109,13 @@ class McpServerTests(unittest.TestCase):
             fake_dotnet = fake_bin / ("dotnet.cmd" if os.name == "nt" else "dotnet")
 
             with (
-                mock.patch("cityadvisor.paths.Path.cwd", return_value=root),
+                mock.patch("chief_of_staff.paths.Path.cwd", return_value=root),
                 mock.patch.dict(
                     os.environ,
                     {
                         "PATH": f"{fake_bin}{os.pathsep}{os.environ.get('PATH', '')}",
-                        "CITYADVISOR_DOTNET_COMMAND": str(fake_dotnet),
-                        "CITYADVISOR_SAVE_INVESTIGATOR_PROJECT": str(project_path),
+                        "CHIEF_OF_STAFF_DOTNET_COMMAND": str(fake_dotnet),
+                        "CHIEF_OF_STAFF_SAVE_INVESTIGATOR_PROJECT": str(project_path),
                     },
                 ),
             ):
@@ -124,7 +124,7 @@ class McpServerTests(unittest.TestCase):
                         "jsonrpc": "2.0",
                         "id": 2,
                         "method": "tools/call",
-                        "params": {"name": "cityadvisor_analyze_city", "arguments": {}},
+                        "params": {"name": "chief_of_staff_analyze_city", "arguments": {}},
                     },
                     {"mods_data_dir": str(mods_data)},
                 )
@@ -133,6 +133,46 @@ class McpServerTests(unittest.TestCase):
         payload = json.loads(text)
         self.assertIn("Fresh Subway: 30 waiting, max stop 12", payload["markdown"])
         self.assertNotIn("Stale Subway", payload["markdown"])
+
+    def test_analyze_city_tool_does_not_use_stale_save_output_when_refresh_skips(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            mods_data = root / "ModsData"
+            dataexport = mods_data / "CS2DataExport"
+            dataexport.mkdir(parents=True)
+            (dataexport / "latest.json").write_text(
+                json.dumps({"city": {"city_name": "No Stale City"}, "population": {"total_population": 1234}}),
+                encoding="utf-8",
+            )
+            stale_root = root / "stale-save-output"
+            stale_output = stale_root / "20000101-000000"
+            stale_output.mkdir(parents=True)
+            (stale_output / "city-state-report-facts.json").write_text(
+                json.dumps({"estimatedCompletionPercent": 99}),
+                encoding="utf-8",
+            )
+            (stale_output / "transport-report-facts.json").write_text("{}", encoding="utf-8")
+
+            response = handle_request(
+                {
+                    "jsonrpc": "2.0",
+                    "id": 3,
+                    "method": "tools/call",
+                    "params": {"name": "chief_of_staff_analyze_city", "arguments": {}},
+                },
+                {
+                    "mods_data_dir": str(mods_data),
+                    "save_investigator_output_dir": str(stale_root),
+                    "save_investigator_project": str(root / "missing" / "SaveInvestigator.csproj"),
+                },
+            )
+
+        text = response["result"]["content"][0]["text"]
+        payload = json.loads(text)
+        self.assertEqual(payload["city_name"], "No Stale City")
+        self.assertNotIn("saveinvestigator", payload["evidence_sources"])
+        self.assertIn("saveinvestigator", payload["missing_sources"])
+        self.assertNotIn("Save understanding: 99%", payload["markdown"])
 
 
 if __name__ == "__main__":
