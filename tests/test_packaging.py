@@ -186,6 +186,53 @@ class PackagingTests(unittest.TestCase):
             self.assertIn("python -m chief_of_staff.plugin_packages sync", output)
             self.assertIn(str(stale_metadata), output)
 
+    def test_claude_plugin_json_is_lean_and_native(self) -> None:
+        from chief_of_staff import plugin_metadata
+
+        plugin = json.loads(plugin_metadata.claude_plugin_json())
+
+        self.assertEqual(plugin["name"], "cities2-chief-of-staff")
+        self.assertEqual(plugin["displayName"], "Cities2 Chief of Staff")
+        self.assertEqual(plugin["version"], "0.1.0")
+        self.assertEqual(plugin["description"], "Cities2 Chief of Staff for Claude Code.")
+        self.assertEqual(plugin["skills"], "./skills/")
+        self.assertEqual(plugin["mcpServers"], "./.mcp.json")
+        self.assertEqual(plugin["author"]["name"], "mayor-modder")
+        self.assertNotIn("interface", plugin)
+
+    def test_claude_mcp_json_uses_plugin_root_variable(self) -> None:
+        from chief_of_staff import plugin_metadata
+
+        server = json.loads(plugin_metadata.claude_mcp_json())["mcpServers"]["cities2-chief-of-staff"]
+
+        self.assertEqual(server["command"], "node")
+        self.assertEqual(
+            server["args"],
+            ["${CLAUDE_PLUGIN_ROOT}/bin/cities2-chief-of-staff-launcher.js"],
+        )
+        self.assertNotIn("cwd", server)
+
+    def test_claude_marketplace_reference_shape(self) -> None:
+        from chief_of_staff import plugin_metadata
+
+        market = json.loads(plugin_metadata.claude_marketplace_json())
+
+        self.assertEqual(market["name"], "mayor-modder-cities2")
+        self.assertEqual(market["owner"]["name"], "mayor-modder")
+        self.assertEqual(market["metadata"]["pluginRoot"], "./plugins")
+        self.assertEqual(market["plugins"][0]["name"], "cities2-chief-of-staff")
+        self.assertEqual(market["plugins"][0]["source"], "cities2-chief-of-staff-claude")
+        self.assertEqual(market["plugins"][0]["version"], "0.1.0")
+
+    def test_claude_readme_has_install_and_privacy(self) -> None:
+        from chief_of_staff import plugin_metadata
+
+        text = plugin_metadata.claude_readme_md()
+
+        self.assertIn("/plugin marketplace add mayor-modder/Mayor-Modder-Cities2-Plugins", text)
+        self.assertIn("/plugin install cities2-chief-of-staff@mayor-modder-cities2", text)
+        self.assertIn("does not collect telemetry", text)
+
     @staticmethod
     def _write_plugin_sync_fixture(root: Path) -> None:
         skill_dir = root / "skills" / "cities2-chief-of-staff"
