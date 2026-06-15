@@ -46,6 +46,18 @@ class SkillContentTests(unittest.TestCase):
         self.assertIn("ModsData/InfoLoomBridge/latest.json", text)
         self.assertIn("Do not tell users to enable the local mod in the mod list", normalized)
 
+    def test_skill_teaches_specific_infoloomtwo_dependency_check(self) -> None:
+        text = SKILL.read_text(encoding="utf-8")
+        normalized = " ".join(text.split())
+
+        self.assertIn("https://mods.paradoxplaza.com/mods/91433/Windows", text)
+        self.assertIn("https://github.com/bruceyboy24804/InfoLoom", text)
+        self.assertIn("InfoLoomTwo.dll", text)
+        self.assertIn("InfoLoomTwo_win_x86_64.dll", text)
+        self.assertIn(".cache/Mods/pdx_mods", text)
+        self.assertIn("Mods/InfoLoom", text)
+        self.assertIn("Do not treat unrelated InfoLoom-family mods as sufficient", normalized)
+
     def test_skill_test_evidence_records_baseline_and_post_skill_sections(self) -> None:
         text = EVIDENCE.read_text(encoding="utf-8")
 
@@ -58,6 +70,7 @@ class SkillContentTests(unittest.TestCase):
             "Scenario 4: Mayor-Facing Brief",
             "Scenario 5: Wrong Tool Boundary",
             "Scenario 6: Companion Mod Install Help",
+            "Scenario 7: Specific InfoLoom Two Dependency",
         ):
             self.assertIn(label, text)
 

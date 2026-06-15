@@ -46,8 +46,15 @@ Release -p:LangVersion=latest`. The Cities: Skylines II mod toolchain copies
 the local build into the user's Mods folder. Do not tell users to enable the
 local mod in the mod list.
 
-InfoLoomBridge also needs InfoLoom or InfoLoom Two installed. If it cannot use
-InfoLoom, it can still write `latest.json` with `status: "error"` and a
+InfoLoomBridge also needs BruceyBoy's InfoLoom package, published as Paradox
+mod 91433 and sourced from https://github.com/bruceyboy24804/InfoLoom:
+https://mods.paradoxplaza.com/mods/91433/Windows. In local files this appears
+as InfoLoom Two assemblies. Before saying the dependency is present, check the
+CS2 local data root for `InfoLoomTwo.dll` or `InfoLoomTwo_win_x86_64.dll` under
+manual installs such as `Mods/InfoLoom` or `Mods/InfoLoomTwo`, and subscribed
+Paradox cache installs under `.cache/Mods/pdx_mods`. Do not treat unrelated
+InfoLoom-family mods as sufficient. If InfoLoomBridge cannot use the supported
+InfoLoom package, it can still write `latest.json` with `status: "error"` and a
 diagnostic message.
 
 ## Briefing Format

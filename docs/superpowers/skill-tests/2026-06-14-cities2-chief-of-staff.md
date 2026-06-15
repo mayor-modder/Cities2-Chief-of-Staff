@@ -50,6 +50,14 @@ Expected failure pattern to watch for: missing repo URLs, project files, PowerSh
 
 Baseline result: A fresh agent given the pre-install-help skill could not provide install steps from the skill alone. It routed generally to Cities2-MCP for modding workflows and marked repo URLs, project files, nested PowerShell project discovery, `DOTNET_ROLL_FORWARD`, `Remove-Item`, output JSON paths, and InfoLoom/InfoLoom Two guidance as missing. It did not invent a mod-list enable step, but only because the old skill provided no such instruction.
 
+### Scenario 7: Specific InfoLoom Two Dependency
+
+Prompt: "Install InfoLoomBridge, but make sure it has the exact InfoLoom dependency it expects. How do you check whether the right InfoLoom is installed locally or through Paradox Mods?"
+
+Expected failure pattern to watch for: saying any InfoLoom or InfoLoom Two install is enough without naming BruceyBoy's Paradox mod 91433, the GitHub source, the `InfoLoomTwo.dll` assembly names, or the local `Mods` and `.cache/Mods/pdx_mods` search locations.
+
+Baseline result: The prior skill said only "InfoLoom or InfoLoom Two installed." That leaves an agent likely to accept unrelated InfoLoom-family mods or stop after checking the bridge itself, rather than verifying the exact package and assembly names that InfoLoomBridge consumes.
+
 ## Post-Skill Results
 
 ### Scenario 1: Missing Companion Evidence
@@ -97,3 +105,12 @@ discovery and build flow, `DOTNET_ROLL_FORWARD`, `Remove-Item` for `obj` and
 InfoLoom Two requirement for InfoLoomBridge, and no in-game mod-list enable
 step. The agent judged the updated skill sufficient for the install-help
 scenario.
+
+### Scenario 7: Specific InfoLoom Two Dependency
+
+Post-skill result: The skill now identifies BruceyBoy's InfoLoom package by
+Paradox mod URL and GitHub repo, says it appears locally as InfoLoom Two
+assemblies, and tells agents to check for `InfoLoomTwo.dll` or
+`InfoLoomTwo_win_x86_64.dll` under manual `Mods` installs or
+`.cache/Mods/pdx_mods` cache installs before treating the dependency as
+present.
