@@ -33,10 +33,10 @@ Enter `/plugin`, install **Cities2 Chief of Staff**, then restart Codex.
 5. Install and enable **Cities2 Chief of Staff**.
 6. Fully exit Codex and restart.
 
-## Install in Claude Code
+## Install In Claude Code
 
 In Claude Code, add the shared Mayor Modder Cities2 Plugins marketplace and
-install the plugin:
+install the plugin. Type these commands at the Claude Code prompt:
 
 ```text
 /plugin marketplace add mayor-modder/Mayor-Modder-Cities2-Plugins
