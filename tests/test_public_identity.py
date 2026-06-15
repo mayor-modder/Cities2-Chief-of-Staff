@@ -73,3 +73,4 @@ class PublicIdentityTests(unittest.TestCase):
         ):
             self.assertNotIn("C:\\Users", blob)
             self.assertNotIn("/Users/", blob)
+            self.assertNotIn("/home/", blob)
