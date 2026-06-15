@@ -35,18 +35,18 @@ Enter `/plugin`, install **Cities2 Chief of Staff**, then restart Codex.
 
 ## Use The Skill
 
-Type `$` and choose `cities2-chief-of-staff`, or invoke it directly:
+Type `$` and choose `brief` under **Cities2 Chief of Staff**, or invoke it directly:
 
 ```text
-$cities2-chief-of-staff:cities2-chief-of-staff Prepare today's mayoral briefing.
+$cities2-chief-of-staff:brief Prepare today's mayoral briefing.
 ```
 
 ```text
-$cities2-chief-of-staff:cities2-chief-of-staff Show me the city's top priorities.
+$cities2-chief-of-staff:brief Show me the city's top priorities.
 ```
 
 ```text
-$cities2-chief-of-staff:cities2-chief-of-staff Recommend the next moves for my city.
+$cities2-chief-of-staff:brief Recommend the next moves for my city.
 ```
 
 You can also check available skills with `/skills`.
