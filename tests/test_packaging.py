@@ -34,7 +34,7 @@ class PackagingTests(unittest.TestCase):
         self.assertEqual(plugin["mcpServers"], "./.mcp.json")
         self.assertEqual(plugin["interface"]["displayName"], "Cities2 Chief of Staff")
         self.assertEqual(plugin["interface"]["category"], "Coding")
-        self.assertEqual(plugin["interface"]["capabilities"], ["Read"])
+        self.assertEqual(plugin["interface"]["capabilities"], ["Read", "Write"])
         self.assertEqual(plugin["interface"]["brandColor"], "#1F6F78")
         self.assertEqual(
             plugin["interface"]["privacyPolicyURL"],
@@ -114,6 +114,23 @@ class PackagingTests(unittest.TestCase):
 
             self.assertIn(stale_skill, changed)
             self.assertIn(stale_skill, stale)
+
+    def test_plugin_package_check_detects_generated_cache_artifacts(self) -> None:
+        from chief_of_staff import plugin_packages
+
+        with tempfile.TemporaryDirectory(prefix="chief-of-staff-plugin-sync-") as tmp:
+            root = Path(tmp)
+            self._write_plugin_sync_fixture(root)
+            package_root = Path("plugins") / "cities2-chief-of-staff"
+
+            plugin_packages.sync_packages(root, package_roots=(package_root,))
+            cache_file = root / package_root / "vendor" / "chief_of_staff" / "__pycache__" / "mcp_server.pyc"
+            cache_file.parent.mkdir(parents=True)
+            cache_file.write_bytes(b"cache")
+
+            stale = plugin_packages.check_packages(root, package_roots=(package_root,))
+
+            self.assertIn(cache_file, stale)
 
     def test_repo_generated_plugin_package_is_in_sync(self) -> None:
         from chief_of_staff import plugin_packages

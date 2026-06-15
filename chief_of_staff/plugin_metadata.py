@@ -42,7 +42,7 @@ def codex_plugin_json() -> str:
                 ),
                 "developerName": "mayor-modder",
                 "category": "Coding",
-                "capabilities": ["Read"],
+                "capabilities": ["Read", "Write"],
                 "websiteURL": REPO_URL,
                 "privacyPolicyURL": PRIVACY_URL,
                 "termsOfServiceURL": TERMS_URL,

@@ -28,19 +28,20 @@ function findPython() {
 }
 
 function invocationForRoot(pluginRoot) {
+  const baseEnv = { ...process.env, PYTHONDONTWRITEBYTECODE: "1" };
   const vendoredScript = path.join(pluginRoot, "vendor", "run_server.py");
-  if (fs.existsSync(vendoredScript)) return { args: [vendoredScript], env: process.env };
+  if (fs.existsSync(vendoredScript)) return { args: [vendoredScript], env: baseEnv };
 
   const vendoredServer = path.join(pluginRoot, "vendor", "chief_of_staff", "mcp_server.py");
   if (fs.existsSync(vendoredServer)) {
-    const env = { ...process.env };
+    const env = { ...baseEnv };
     env.PYTHONPATH = [path.join(pluginRoot, "vendor"), env.PYTHONPATH].filter(Boolean).join(path.delimiter);
     return { args: ["-m", "chief_of_staff.mcp_server"], env };
   }
 
   const sourceServer = path.join(pluginRoot, "chief_of_staff", "mcp_server.py");
   if (fs.existsSync(sourceServer)) {
-    const env = { ...process.env };
+    const env = { ...baseEnv };
     env.PYTHONPATH = [pluginRoot, env.PYTHONPATH].filter(Boolean).join(path.delimiter);
     return { args: ["-m", "chief_of_staff.mcp_server"], env };
   }

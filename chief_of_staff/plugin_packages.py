@@ -56,19 +56,20 @@ function findPython() {
 }
 
 function invocationForRoot(pluginRoot) {
+  const baseEnv = { ...process.env, PYTHONDONTWRITEBYTECODE: "1" };
   const vendoredScript = path.join(pluginRoot, "vendor", "run_server.py");
-  if (fs.existsSync(vendoredScript)) return { args: [vendoredScript], env: process.env };
+  if (fs.existsSync(vendoredScript)) return { args: [vendoredScript], env: baseEnv };
 
   const vendoredServer = path.join(pluginRoot, "vendor", "chief_of_staff", "mcp_server.py");
   if (fs.existsSync(vendoredServer)) {
-    const env = { ...process.env };
+    const env = { ...baseEnv };
     env.PYTHONPATH = [path.join(pluginRoot, "vendor"), env.PYTHONPATH].filter(Boolean).join(path.delimiter);
     return { args: ["-m", "chief_of_staff.mcp_server"], env };
   }
 
   const sourceServer = path.join(pluginRoot, "chief_of_staff", "mcp_server.py");
   if (fs.existsSync(sourceServer)) {
-    const env = { ...process.env };
+    const env = { ...baseEnv };
     env.PYTHONPATH = [pluginRoot, env.PYTHONPATH].filter(Boolean).join(path.delimiter);
     return { args: ["-m", "chief_of_staff.mcp_server"], env };
   }
@@ -267,7 +268,7 @@ def _changed_tree_paths(expected: Path, actual: Path) -> tuple[Path, ...]:
         return tuple(actual / path.relative_to(expected) for path in _files_under(expected))
 
     expected_files = {path.relative_to(expected): path for path in _files_under(expected)}
-    actual_files = {path.relative_to(actual): path for path in _files_under(actual)}
+    actual_files = {path.relative_to(actual): path for path in _files_under(actual, include_ignored=True)}
 
     for relative, expected_file in expected_files.items():
         actual_file = actual / relative
@@ -278,9 +279,11 @@ def _changed_tree_paths(expected: Path, actual: Path) -> tuple[Path, ...]:
     return tuple(changed)
 
 
-def _files_under(root: Path) -> tuple[Path, ...]:
+def _files_under(root: Path, *, include_ignored: bool = False) -> tuple[Path, ...]:
     if root.is_file():
         return (root,)
+    if include_ignored:
+        return tuple(sorted(path for path in root.rglob("*") if path.is_file()))
     return tuple(
         sorted(
             path

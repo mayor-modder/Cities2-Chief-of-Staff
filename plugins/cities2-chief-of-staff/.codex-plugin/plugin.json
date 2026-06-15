@@ -24,7 +24,8 @@
     "developerName": "mayor-modder",
     "category": "Coding",
     "capabilities": [
-      "Read"
+      "Read",
+      "Write"
     ],
     "websiteURL": "https://github.com/mayor-modder/Cities2-ChiefOfStaff",
     "privacyPolicyURL": "https://github.com/mayor-modder/Cities2-ChiefOfStaff/blob/main/PRIVACY.md",
