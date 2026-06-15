@@ -1,6 +1,6 @@
 # Chief of Staff for Cities: Skylines II
 
-Cities2-Chief-of-Staff is a local mayoral chief-of-staff analysis layer for Cities: Skylines II city evidence.
+Chief of Staff turns local Cities: Skylines II data into practical mayoral briefings for agents and humans.
 
 It is separate from, but complementary to:
 
