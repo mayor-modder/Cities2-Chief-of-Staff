@@ -39,7 +39,7 @@ def refresh_save_investigator_output(
         )
 
     command = [
-        dotnet_command or os.environ.get("CITYADVISOR_DOTNET_COMMAND") or "dotnet",
+        dotnet_command or os.environ.get("CHIEF_OF_STAFF_DOTNET_COMMAND") or "dotnet",
         "run",
         "--project",
         str(project),

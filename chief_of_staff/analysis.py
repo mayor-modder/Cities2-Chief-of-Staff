@@ -14,7 +14,7 @@ def build_city_report(inventory: SourceInventory) -> CityReport:
         "Unknown city",
     )
     facts: dict[str, Any] = {}
-    lines = ["# CityAdvisor Report", ""]
+    lines = ["# Chief of Staff Brief", ""]
     lines.append(f"City: {city_name}")
     lines.append("")
     lines.append("## Evidence")

@@ -1,6 +1,6 @@
-# Cities2-CityAdvisor
+# Cities2-ChiefOfStaff
 
-Cities2-CityAdvisor is a local analysis layer for Cities: Skylines II city evidence.
+Cities2-ChiefOfStaff is a local mayoral chief-of-staff analysis layer for Cities: Skylines II city evidence.
 
 It is separate from:
 
@@ -8,7 +8,7 @@ It is separate from:
 - `Cities2-DataExport`, which is an in-game mod that writes city snapshots
 - `Cities2-InfoLoomBridge`, which writes selected InfoLoom-derived data
 
-CityAdvisor reads whatever local evidence is available and turns it into reports an agent or human can use.
+Chief of Staff reads whatever local evidence is available and turns it into briefs an agent or human can use.
 
 ## Current First Version
 
@@ -18,35 +18,35 @@ This first version can:
 - detect `Cities2-InfoLoomBridge` output at `ModsData/InfoLoomBridge/latest.json`
 - detect the newest Save Investigator output directory
 - include the Save Investigator source under `tools/SaveInvestigator`
-- produce a Markdown city report
-- expose the same report/status through a small MCP server
+- produce a Markdown city brief
+- expose the same brief/status through a small MCP server
 
-Only Python is required for the current CityAdvisor layer. Optional evidence sources make reports better, but they are not required for the tool to start.
+Only Python is required for the current Chief of Staff layer. Optional evidence sources make briefs better, but they are not required for the tool to start.
 
 ## Command Line
 
 Show detected sources:
 
 ```powershell
-python -m cityadvisor.cli status
+python -m chief_of_staff.cli status
 ```
 
-Build a report:
+Build a brief:
 
 ```powershell
-python -m cityadvisor.cli analyze
+python -m chief_of_staff.cli analyze
 ```
 
-`analyze` refreshes Save Investigator before building the report when
+`analyze` refreshes Save Investigator before building the brief when
 `tools/SaveInvestigator/SaveInvestigator.csproj` is available. This keeps
-agent-generated reports from silently using stale save evidence. Use
-`status` when you only want to inspect currently detected evidence without
-running a new save investigation.
+agent-generated briefs from silently using stale save evidence. Use `status`
+when you only want to inspect currently detected evidence without running a new
+save investigation.
 
 Use explicit paths:
 
 ```powershell
-python -m cityadvisor.cli analyze `
+python -m chief_of_staff.cli analyze `
   --mods-data "$env:USERPROFILE\AppData\LocalLow\Colossal Order\Cities Skylines II\ModsData" `
   --save-path "$env:USERPROFILE\AppData\LocalLow\Colossal Order\Cities Skylines II\Saves\<steam-id>\<save>.cok" `
   --save-investigator-output "C:\path\to\SaveInvestigator\output"
@@ -55,13 +55,20 @@ python -m cityadvisor.cli analyze `
 Use an existing Save Investigator output without refreshing:
 
 ```powershell
-python -m cityadvisor.cli analyze --skip-save-investigator-refresh
+python -m chief_of_staff.cli analyze --skip-save-investigator-refresh
 ```
 
 Print JSON:
 
 ```powershell
-python -m cityadvisor.cli analyze --json
+python -m chief_of_staff.cli analyze --json
+```
+
+Installed console scripts:
+
+```powershell
+chief-of-staff status
+chief-of-staff analyze
 ```
 
 ## MCP Server
@@ -69,24 +76,30 @@ python -m cityadvisor.cli analyze --json
 Start the MCP server with:
 
 ```powershell
-python -m cityadvisor.mcp_server
+python -m chief_of_staff.mcp_server
+```
+
+Installed MCP console script:
+
+```powershell
+chief-of-staff-mcp
 ```
 
 Available MCP tools:
 
-- `cityadvisor_get_status`
-- `cityadvisor_analyze_city` refreshes Save Investigator first
-- `cityadvisor_get_report` refreshes Save Investigator first
+- `chief_of_staff_get_status`
+- `chief_of_staff_analyze_city` refreshes Save Investigator first
+- `chief_of_staff_get_report` refreshes Save Investigator first
 
 Example MCP config:
 
 ```json
 {
   "mcpServers": {
-    "cities2-cityadvisor": {
+    "cities2-chief-of-staff": {
       "command": "<PYTHON_PATH>",
       "args": [
-        "<REPO_ROOT>/cityadvisor/mcp_server.py",
+        "<REPO_ROOT>/chief_of_staff/mcp_server.py",
         "--mods-data",
         "<MODS_DATA_DIR>",
         "--save-investigator-output",
@@ -101,22 +114,22 @@ Example MCP config:
 
 ### Save Investigator
 
-Save Investigator is the default save-analysis provider for CityAdvisor. Its source is included under:
+Save Investigator is the default save-analysis provider for Chief of Staff. Its source is included under:
 
 ```text
 tools/SaveInvestigator
 ```
 
-CityAdvisor reads the JSON artifacts it writes, such as:
+Chief of Staff reads the JSON artifacts it writes, such as:
 
 - `city-state-report-facts.json`
 - `transport-report-facts.json`
 
-The next integration step is to add a CityAdvisor command that builds/runs Save Investigator directly and then refreshes the report.
+The next integration step is to add a Chief of Staff command that builds/runs Save Investigator directly and then refreshes the brief.
 
 ### Cities2-DataExport
 
-If present, CityAdvisor reads:
+If present, Chief of Staff reads:
 
 ```text
 ModsData/CS2DataExport/latest.json
@@ -126,7 +139,7 @@ This provides live city sample data such as population, city name, workforce, tr
 
 ### Cities2-InfoLoomBridge
 
-If present, CityAdvisor reads:
+If present, Chief of Staff reads:
 
 ```text
 ModsData/InfoLoomBridge/latest.json

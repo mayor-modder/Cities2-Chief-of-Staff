@@ -12,7 +12,7 @@ from .sources import discover_sources
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Cities2-CityAdvisor")
+    parser = argparse.ArgumentParser(description="Cities2-ChiefOfStaff")
     subparsers = parser.add_subparsers(dest="command", required=True)
     _add_common_options(subparsers.add_parser("status", help="Show available city evidence sources."))
     _add_common_options(subparsers.add_parser("analyze", help="Build a city report from available evidence."))

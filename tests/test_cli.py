@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from cityadvisor.cli import main
+from chief_of_staff.cli import main
 from tests.save_investigator_fake import write_fake_dotnet
 
 
@@ -47,7 +47,7 @@ class CliTests(unittest.TestCase):
                 rc = main(["analyze", "--mods-data", str(mods_data), "--skip-save-investigator-refresh"])
 
         self.assertEqual(rc, 0)
-        self.assertIn("# CityAdvisor Report", out.getvalue())
+        self.assertIn("# Chief of Staff Brief", out.getvalue())
         self.assertIn("CLI City", out.getvalue())
 
     def test_analyze_refreshes_save_investigator_before_building_report(self) -> None:
@@ -110,13 +110,13 @@ class CliTests(unittest.TestCase):
 
             out = io.StringIO()
             with (
-                mock.patch("cityadvisor.paths.Path.cwd", return_value=root),
+                mock.patch("chief_of_staff.paths.Path.cwd", return_value=root),
                 mock.patch.dict(
                     os.environ,
                     {
                         "PATH": f"{fake_bin}{os.pathsep}{os.environ.get('PATH', '')}",
-                        "CITYADVISOR_DOTNET_COMMAND": str(fake_dotnet),
-                        "CITYADVISOR_SAVE_INVESTIGATOR_PROJECT": str(project_path),
+                        "CHIEF_OF_STAFF_DOTNET_COMMAND": str(fake_dotnet),
+                        "CHIEF_OF_STAFF_SAVE_INVESTIGATOR_PROJECT": str(project_path),
                     },
                 ),
                 mock.patch("sys.stdout", out),

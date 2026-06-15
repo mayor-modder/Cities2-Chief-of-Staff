@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from cityadvisor.analysis import build_city_report
-from cityadvisor.sources import discover_sources
+from chief_of_staff.analysis import build_city_report
+from chief_of_staff.sources import discover_sources
 
 
 class SourceDiscoveryTests(unittest.TestCase):
@@ -76,6 +76,7 @@ class SourceDiscoveryTests(unittest.TestCase):
             report = build_city_report(inventory)
 
         self.assertEqual(report.city_name, "Evergreen Bay")
+        self.assertIn("# Chief of Staff Brief", report.markdown)
         self.assertIn("dataexport", report.evidence_sources)
         self.assertIn("infoloombridge", report.missing_optional_sources)
         self.assertIn("Population: 173,422", report.markdown)
