@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import unittest
@@ -52,3 +53,23 @@ class PublicIdentityTests(unittest.TestCase):
         self.assertEqual(response["result"]["serverInfo"]["name"], "Cities2-ChiefOfStaff")
         self.assertEqual(response["result"]["serverInfo"]["version"], "0.1.0")
         self.assertIn("Chief of Staff", response["result"]["instructions"])
+
+    def test_claude_metadata_uses_public_identity_only(self) -> None:
+        from chief_of_staff import plugin_metadata
+
+        plugin = json.loads(plugin_metadata.claude_plugin_json())
+        market = json.loads(plugin_metadata.claude_marketplace_json())
+
+        self.assertEqual(plugin["name"], "cities2-chief-of-staff")
+        self.assertEqual(plugin["version"], "0.1.0")
+        self.assertEqual(plugin["author"]["name"], "mayor-modder")
+        self.assertEqual(market["name"], "mayor-modder-cities2")
+        self.assertEqual(market["owner"]["name"], "mayor-modder")
+
+        for blob in (
+            plugin_metadata.claude_plugin_json(),
+            plugin_metadata.claude_marketplace_json(),
+            plugin_metadata.claude_readme_md(),
+        ):
+            self.assertNotIn("C:\\Users", blob)
+            self.assertNotIn("/Users/", blob)

@@ -177,10 +177,11 @@ This Claude Code plugin helps Claude turn your local Cities: Skylines II data in
 a practical mayoral briefing. It bundles the Chief of Staff skill and a
 plugin-local MCP server launcher.
 
-Privacy: the project does not collect telemetry, does not phone home, and does
-not send game data to the maintainers. It runs locally through your chosen
-agent environment, and only that client or model provider may process prompts
-and tool outputs according to your settings. See the repository `PRIVACY.md`.
+Privacy: the project does not collect telemetry, does not phone home, and
+does not send game data to the maintainers. It runs locally through your
+chosen agent environment, and only that client or model provider may process
+prompts and tool outputs according to your settings. See the repository
+`PRIVACY.md`.
 
 Install from the shared Mayor Modder Cities2 Plugins marketplace:
 
