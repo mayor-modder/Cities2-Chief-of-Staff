@@ -25,6 +25,11 @@ class SkillContentTests(unittest.TestCase):
         self.assertIn("Separate evidence, interpretation, recommended actions, and follow-up investigation", text)
         self.assertIn("Cities2-MCP", text)
         self.assertIn("does not collect telemetry", text)
+        normalized = " ".join(text.split())
+        self.assertIn(
+            "Never put private local paths, account names, save names, or raw exports into public artifacts",
+            normalized,
+        )
 
     def test_skill_test_evidence_records_baseline_and_post_skill_sections(self) -> None:
         text = EVIDENCE.read_text(encoding="utf-8")

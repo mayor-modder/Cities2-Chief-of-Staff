@@ -44,8 +44,8 @@ Separate evidence, interpretation, recommended actions, and follow-up investigat
 ## Privacy
 
 Chief of Staff works with local city evidence. The project does not collect telemetry, does not phone home, and does not send game data to the maintainers.
-Do not put private local paths, account names, save names, or raw exports into
-public artifacts unless the user explicitly asks.
+Never put private local paths, account names, save names, or raw exports into
+public artifacts. Sanitize, summarize, or keep those details local and private.
 
 ## Common Mistakes
 
