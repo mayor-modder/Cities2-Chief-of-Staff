@@ -4,9 +4,9 @@ Cities2-Chief-of-Staff is a local mayoral chief-of-staff analysis layer for Citi
 
 It is separate from:
 
-- `Cities2-MCP`, which is for wiki knowledge and mod project workflows
-- `Cities2-DataExport`, which is an in-game mod that writes city snapshots
-- `Cities2-InfoLoomBridge`, which writes selected InfoLoom-derived data
+- [`Cities2-MCP`](https://github.com/mayor-modder/Cities2-MCP), which is for wiki knowledge and mod project workflows
+- [`Cities2-DataExport`](https://github.com/mayor-modder/Cities2-DataExport), which is an in-game mod that writes city snapshots
+- [`Cities2-InfoLoomBridge`](https://github.com/mayor-modder/Cities2-InfoLoomBridge), which writes selected InfoLoom-derived data
 
 Chief of Staff reads whatever local evidence is available and turns it into briefs an agent or human can use.
 
