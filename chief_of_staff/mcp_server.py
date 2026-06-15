@@ -118,6 +118,7 @@ def _discover_sources(args: JSON, config: JSON, *, refresh_save_investigator: bo
     save_investigator_output_dir = args.get("save_investigator_output_dir") or config.get(
         "save_investigator_output_dir"
     )
+    use_existing_save_investigator_output = True
     skip_refresh = (
         args["skip_save_investigator_refresh"]
         if "skip_save_investigator_refresh" in args
@@ -133,10 +134,13 @@ def _discover_sources(args: JSON, config: JSON, *, refresh_save_investigator: bo
             raise ValueError(str(exception)) from exception
         if refreshed.output_root is not None:
             save_investigator_output_dir = refreshed.output_root
+        else:
+            use_existing_save_investigator_output = False
 
     return discover_sources(
         mods_data_dir=mods_data_dir,
         save_investigator_output_dir=save_investigator_output_dir,
+        use_existing_save_investigator_output=use_existing_save_investigator_output,
     )
 
 

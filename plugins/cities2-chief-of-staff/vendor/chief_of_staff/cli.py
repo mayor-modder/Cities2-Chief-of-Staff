@@ -19,6 +19,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(list(argv) if argv is not None else None)
 
     save_investigator_output_dir = Path(args.save_investigator_output) if args.save_investigator_output else None
+    use_existing_save_investigator_output = True
     if args.command == "analyze" and not args.skip_save_investigator_refresh:
         try:
             refreshed = refresh_save_investigator_output(
@@ -30,10 +31,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 1
         if refreshed.output_root is not None:
             save_investigator_output_dir = refreshed.output_root
+        else:
+            use_existing_save_investigator_output = False
 
     inventory = discover_sources(
         mods_data_dir=Path(args.mods_data) if args.mods_data else None,
         save_investigator_output_dir=save_investigator_output_dir,
+        use_existing_save_investigator_output=use_existing_save_investigator_output,
     )
     if args.command == "status":
         if args.json:

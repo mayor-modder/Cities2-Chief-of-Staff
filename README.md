@@ -143,7 +143,7 @@ Chief of Staff reads the JSON artifacts it writes, such as:
 - `city-state-report-facts.json`
 - `transport-report-facts.json`
 
-The next integration step is to add a Chief of Staff command that builds/runs Save Investigator directly and then refreshes the brief.
+`chief-of-staff analyze` and the report-producing MCP tools run Save Investigator before building a brief. Use `--skip-save-investigator-refresh` only when you explicitly want to inspect existing output offline.
 
 ### Cities2-DataExport
 

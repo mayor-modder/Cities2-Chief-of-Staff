@@ -11,6 +11,8 @@ from .paths import default_mods_data_dir, default_save_investigator_output_dir
 def discover_sources(
     mods_data_dir: Path | str | None = None,
     save_investigator_output_dir: Path | str | None = None,
+    *,
+    use_existing_save_investigator_output: bool = True,
 ) -> SourceInventory:
     mods_data = Path(mods_data_dir).expanduser() if mods_data_dir is not None else default_mods_data_dir()
     save_output = (
@@ -21,7 +23,7 @@ def discover_sources(
     return SourceInventory(
         [
             _dataexport_status(mods_data),
-            _save_investigator_status(save_output),
+            _save_investigator_status(save_output, use_existing_output=use_existing_save_investigator_output),
             _infoloom_status(mods_data),
         ]
     )
@@ -105,7 +107,17 @@ def _infoloom_status(mods_data: Path) -> SourceStatus:
     )
 
 
-def _save_investigator_status(output_root: Path) -> SourceStatus:
+def _save_investigator_status(output_root: Path, *, use_existing_output: bool) -> SourceStatus:
+    if not use_existing_output:
+        return SourceStatus(
+            name="saveinvestigator",
+            label="Save Investigator",
+            available=False,
+            coverage_state="missing",
+            path=path_str(output_root),
+            kind="save_analysis",
+            message="Save Investigator refresh did not produce a fresh output.",
+        )
     latest = _latest_child_dir(output_root)
     if latest is None:
         return SourceStatus(
