@@ -1,7 +1,8 @@
 # Install Cities2 Chief of Staff
 
-Cities2 Chief of Staff is a Codex plugin for local Cities: Skylines II city
-briefing. The plugin bundles the Chief of Staff skill and MCP server launcher.
+Cities2 Chief of Staff helps Codex turn your local Cities: Skylines II data
+into a practical mayoral briefing. The plugin bundles the Chief of Staff skill
+and MCP server launcher.
 
 Your city evidence stays local to your machine and your chosen agent
 environment. The project does not collect telemetry, does not phone home, and
