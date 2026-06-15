@@ -57,6 +57,7 @@ class SkillContentTests(unittest.TestCase):
             "Scenario 3: Partial Evidence Confidence",
             "Scenario 4: Mayor-Facing Brief",
             "Scenario 5: Wrong Tool Boundary",
+            "Scenario 6: Companion Mod Install Help",
         ):
             self.assertIn(label, text)
 
