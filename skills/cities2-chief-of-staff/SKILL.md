@@ -1,6 +1,6 @@
 ---
 name: cities2-chief-of-staff
-description: Use when advising a Cities: Skylines II mayor from local city evidence, city reports, Save Investigator output, DataExport samples, or InfoLoomBridge exports
+description: "Use when advising a Cities: Skylines II mayor from local city evidence, city reports, Save Investigator output, DataExport samples, or InfoLoomBridge exports"
 ---
 
 # Cities2 Chief of Staff
