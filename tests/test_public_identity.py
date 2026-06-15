@@ -63,7 +63,7 @@ class PublicIdentityTests(unittest.TestCase):
         self.assertEqual(plugin["name"], "cities2-chief-of-staff")
         self.assertEqual(plugin["version"], "0.1.0")
         self.assertEqual(plugin["author"]["name"], "mayor-modder")
-        self.assertEqual(market["name"], "mayor-modder-cities2")
+        self.assertEqual(market["name"], "mayor-modder-cities2-plugins")
         self.assertEqual(market["owner"]["name"], "mayor-modder")
 
         for blob in (

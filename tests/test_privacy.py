@@ -30,4 +30,4 @@ class PrivacyDocumentationTests(unittest.TestCase):
         self.assertIn("does not collect telemetry", text)
         self.assertIn("does not phone home", text)
         self.assertIn("does not send game data to the maintainers", text)
-        self.assertIn("/plugin install cities2-chief-of-staff@mayor-modder-cities2", text)
+        self.assertIn("/plugin install cities2-chief-of-staff@mayor-modder-cities2-plugins", text)

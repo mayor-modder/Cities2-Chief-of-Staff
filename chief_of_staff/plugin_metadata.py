@@ -19,7 +19,7 @@ TERMS_URL = "https://github.com/mayor-modder/Cities2-Chief-of-Staff#license"
 LICENSE = "MIT"
 KEYWORDS = ["cities-skylines-ii", "mcp", "city-analysis", "agent-skills"]
 SKILL_NAMES = ("cities2-chief-of-staff",)
-CLAUDE_MARKETPLACE_NAME = "mayor-modder-cities2"
+CLAUDE_MARKETPLACE_NAME = "mayor-modder-cities2-plugins"
 
 
 def _dumps(obj: object) -> str:
@@ -152,16 +152,15 @@ def claude_marketplace_json() -> str:
     return _dumps(
         {
             "name": CLAUDE_MARKETPLACE_NAME,
-            "description": "Mayor Modder Cities: Skylines II plugins for Claude Code.",
+            "description": "Mayor Modder Cities2 Claude plugin marketplace.",
             "owner": AUTHOR,
-            "metadata": {"pluginRoot": "./plugins"},
             "plugins": [
                 {
                     "name": NAME,
-                    "source": "cities2-chief-of-staff-claude",
+                    "source": "./integrations/anthropic/cities2-chief-of-staff",
                     "description": "Local Cities: Skylines II mayoral analysis",
                     "version": VERSION,
-                    "category": "productivity",
+                    "author": AUTHOR,
                 }
             ],
         }
@@ -225,7 +224,7 @@ CLAUDE = Platform(
     readme_md=claude_readme_md,
     marketplace_json=claude_marketplace_json,
     dist_package_root=Path("dist/plugins/cities2-chief-of-staff-claude"),
-    catalog_package_root=Path("plugins/cities2-chief-of-staff-claude"),
+    catalog_package_root=Path("integrations/anthropic/cities2-chief-of-staff"),
     catalog_marketplace_rel=Path(".claude-plugin/marketplace.json"),
 )
 

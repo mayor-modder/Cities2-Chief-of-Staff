@@ -161,7 +161,7 @@ class PackagingTests(unittest.TestCase):
 
             changed = plugin_packages.sync_catalog_package(catalog, repo_root=root)
             codex_target = catalog / "plugins" / "cities2-chief-of-staff"
-            claude_target = catalog / "plugins" / "cities2-chief-of-staff-claude"
+            claude_target = catalog / "integrations" / "anthropic" / "cities2-chief-of-staff"
 
             self.assertTrue((codex_target / ".codex-plugin" / "plugin.json").is_file())
             self.assertTrue((claude_target / ".claude-plugin" / "plugin.json").is_file())
@@ -224,12 +224,12 @@ class PackagingTests(unittest.TestCase):
 
         market = json.loads(plugin_metadata.claude_marketplace_json())
 
-        self.assertEqual(market["name"], "mayor-modder-cities2")
+        self.assertEqual(market["name"], "mayor-modder-cities2-plugins")
         self.assertEqual(market["owner"]["name"], "mayor-modder")
-        self.assertEqual(market["metadata"]["pluginRoot"], "./plugins")
         self.assertEqual(market["plugins"][0]["name"], "cities2-chief-of-staff")
-        self.assertEqual(market["plugins"][0]["source"], "cities2-chief-of-staff-claude")
+        self.assertEqual(market["plugins"][0]["source"], "./integrations/anthropic/cities2-chief-of-staff")
         self.assertEqual(market["plugins"][0]["version"], "0.1.0")
+        self.assertEqual(market["plugins"][0]["author"]["name"], "mayor-modder")
 
     def test_claude_readme_has_install_and_privacy(self) -> None:
         from chief_of_staff import plugin_metadata
@@ -237,7 +237,7 @@ class PackagingTests(unittest.TestCase):
         text = plugin_metadata.claude_readme_md()
 
         self.assertIn("/plugin marketplace add mayor-modder/Mayor-Modder-Cities2-Plugins", text)
-        self.assertIn("/plugin install cities2-chief-of-staff@mayor-modder-cities2", text)
+        self.assertIn("/plugin install cities2-chief-of-staff@mayor-modder-cities2-plugins", text)
         self.assertIn("does not collect telemetry", text)
 
     def test_platform_registry_describes_codex_and_claude(self) -> None:
@@ -255,7 +255,7 @@ class PackagingTests(unittest.TestCase):
 
         self.assertEqual(claude.manifest_dir, ".claude-plugin")
         self.assertEqual(str(claude.dist_package_root), str(Path("dist/plugins/cities2-chief-of-staff-claude")))
-        self.assertEqual(str(claude.catalog_package_root), str(Path("plugins/cities2-chief-of-staff-claude")))
+        self.assertEqual(str(claude.catalog_package_root), str(Path("integrations/anthropic/cities2-chief-of-staff")))
         self.assertEqual(str(claude.catalog_marketplace_rel), str(Path(".claude-plugin/marketplace.json")))
         self.assertEqual(claude.plugin_json(), plugin_metadata.claude_plugin_json())
 
@@ -327,7 +327,7 @@ class PackagingTests(unittest.TestCase):
             )
 
             self.assertTrue((catalog / "plugins" / "cities2-chief-of-staff" / ".codex-plugin" / "plugin.json").is_file())
-            self.assertFalse((catalog / "plugins" / "cities2-chief-of-staff-claude").exists())
+            self.assertFalse((catalog / "integrations" / "anthropic" / "cities2-chief-of-staff").exists())
 
     @staticmethod
     def _write_plugin_sync_fixture(root: Path) -> None:

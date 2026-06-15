@@ -40,7 +40,7 @@ install the plugin. Type these commands at the Claude Code prompt:
 
 ```text
 /plugin marketplace add mayor-modder/Mayor-Modder-Cities2-Plugins
-/plugin install cities2-chief-of-staff@mayor-modder-cities2
+/plugin install cities2-chief-of-staff@mayor-modder-cities2-plugins
 ```
 
 The plugin bundles the Chief of Staff skill (namespaced
