@@ -316,6 +316,10 @@ class PackagingTests(unittest.TestCase):
             catalog = root / "catalog"
             (catalog / ".agents" / "plugins").mkdir(parents=True)
             (catalog / ".agents" / "plugins" / "marketplace.json").write_text("{}\n", encoding="utf-8")
+            # Claude marketplace is present too, so the absent Claude payload below
+            # proves targeting (not just the marketplace existence guard) skipped it.
+            (catalog / ".claude-plugin").mkdir(parents=True)
+            (catalog / ".claude-plugin" / "marketplace.json").write_text("{}\n", encoding="utf-8")
             self._write_plugin_sync_fixture(root)
 
             plugin_packages.sync_catalog_package(
