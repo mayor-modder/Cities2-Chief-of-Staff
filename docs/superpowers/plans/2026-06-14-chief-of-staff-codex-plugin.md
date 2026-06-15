@@ -24,7 +24,7 @@
 - Modify `pyproject.toml`: update project name, description, scripts, and package include.
 - Modify `README.md`: rename product, update commands, add privacy and companion-source sections.
 - Create `PRIVACY.md`: local-first privacy promise and model-provider caveat.
-- Create `skills/cities2-chief-of-staff/SKILL.md`: role and workflow skill.
+- Create `skills/brief/SKILL.md`: role and workflow skill.
 - Create `docs/superpowers/skill-tests/2026-06-14-cities2-chief-of-staff.md`: baseline and post-skill pressure scenario evidence.
 - Create `chief_of_staff/plugin_metadata.py`: canonical Codex plugin metadata builders.
 - Create `chief_of_staff/plugin_packages.py`: generated package sync/check command.
@@ -698,7 +698,7 @@ git commit -m "Document Chief of Staff privacy model"
 
 **Files:**
 - Create: `docs/superpowers/skill-tests/2026-06-14-cities2-chief-of-staff.md`
-- Create: `skills/cities2-chief-of-staff/SKILL.md`
+- Create: `skills/brief/SKILL.md`
 - Create: `tests/test_skill_content.py`
 
 - [ ] **Step 1: Use required skills before authoring the skill**
@@ -785,7 +785,7 @@ class SkillContentTests(unittest.TestCase):
     def test_skill_frontmatter_and_role_guidance(self) -> None:
         text = SKILL.read_text(encoding="utf-8")
 
-        self.assertTrue(text.startswith("---\nname: cities2-chief-of-staff\n"))
+self.assertTrue(text.startswith("---\nname: brief\n"))
         self.assertIn("description: Use when", text)
         self.assertIn("Mayor's office Chief of Staff", text)
         self.assertIn("chief_of_staff_analyze_city", text)
@@ -819,15 +819,15 @@ Run:
 python -m unittest tests.test_skill_content
 ```
 
-Expected: FAIL because `skills/cities2-chief-of-staff/SKILL.md` does not exist.
+Expected: FAIL because `skills/brief/SKILL.md` does not exist.
 
-- [ ] **Step 5: Write `skills/cities2-chief-of-staff/SKILL.md`**
+- [ ] **Step 5: Write `skills/brief/SKILL.md`**
 
 Use this content:
 
 ```markdown
 ---
-name: cities2-chief-of-staff
+name: brief
 description: Use when advising a Cities: Skylines II mayor from local city evidence, city reports, Save Investigator output, DataExport samples, or InfoLoomBridge exports
 ---
 
@@ -907,7 +907,7 @@ Run:
 
 ```powershell
 git status --short
-git add skills/cities2-chief-of-staff docs/superpowers/skill-tests tests/test_skill_content.py
+git add skills/brief docs/superpowers/skill-tests tests/test_skill_content.py
 git commit -m "Add Chief of Staff skill"
 ```
 
@@ -1094,7 +1094,7 @@ PRIVACY_URL = "https://github.com/mayor-modder/Cities2-ChiefOfStaff/blob/main/PR
 TERMS_URL = "https://github.com/mayor-modder/Cities2-ChiefOfStaff#license"
 LICENSE = "MIT"
 KEYWORDS = ["cities-skylines-ii", "mcp", "city-analysis", "agent-skills"]
-SKILL_NAMES = ("cities2-chief-of-staff",)
+SKILL_NAMES = ("brief",)
 
 
 def _dumps(obj: object) -> str:

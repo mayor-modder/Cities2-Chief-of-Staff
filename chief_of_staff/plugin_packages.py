@@ -366,7 +366,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     print("Plugin package generated artifacts differ from canonical sources.")
-    print("Canonical sources: chief_of_staff/plugin_metadata.py, skills/cities2-chief-of-staff, chief_of_staff")
+    print("Canonical sources: chief_of_staff/plugin_metadata.py, skills/brief, chief_of_staff")
     print("generated package: dist/plugins/cities2-chief-of-staff")
     print("Run: python -m chief_of_staff.plugin_packages sync")
     print("Stale paths:")
