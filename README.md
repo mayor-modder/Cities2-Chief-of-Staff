@@ -10,6 +10,8 @@ It is separate from:
 
 Chief of Staff reads whatever local evidence is available and turns it into briefs an agent or human can use.
 
+Install the Codex plugin with [INSTALL.md](INSTALL.md).
+
 ## Privacy
 
 Chief of Staff analyzes local city evidence through your chosen agent
