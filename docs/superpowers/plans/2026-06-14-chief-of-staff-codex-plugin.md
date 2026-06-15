@@ -1399,25 +1399,12 @@ cities2-chief-of-staff 0.1.0
 
 - [ ] **Step 4: Scan public artifacts for private identifiers**
 
-Run:
+Run a local-only scan over public artifacts for machine-specific checkout
+paths, private agent cache paths, and personal identifiers. Do not commit the
+literal private patterns into the repo-visible plan or generated artifacts.
 
-```powershell
-$public = @(
-  "README.md",
-  "PRIVACY.md",
-  "pyproject.toml",
-  "mcp.config.example.json",
-  "skills",
-  "plugins",
-  ".agents",
-  "docs\superpowers\plans",
-  "docs\superpowers\specs",
-  "docs\superpowers\skill-tests"
-)
-Get-ChildItem $public -Recurse -File | Select-String -Pattern "C:\\Users\\|\\.codex\\|USERPROFILE|HOME" -CaseSensitive:$false
-```
-
-Expected: no matches except intentional generic environment variable names if any are already part of launcher logic. If `USERPROFILE` or `HOME` appears only in generic launcher code, keep it.
+Expected: no matches except intentional generic environment variable names if
+any are already part of launcher logic.
 
 - [ ] **Step 5: Scan generated public artifacts for old CityAdvisor names**
 
