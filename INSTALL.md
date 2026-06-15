@@ -26,9 +26,9 @@ Enter `/plugin`, install **Cities2 Chief of Staff**, then restart Codex.
 ## Install In The Codex App
 
 1. Open the Codex app and choose **Plugins** from the sidebar.
-2. Next to the "Search plugins" input, click **Built by OpenAI**.
-3. Click **+ Add more**.
-4. Enter source `mayor-modder/Cities2-Chief-of-Staff` and click **Add Marketplace**.
+2. Look for the **+** button and click the down arrow next to it.
+3. Click **Add marketplace**.
+4. Enter source `mayor-modder/Cities2-Chief-of-Staff`.
 5. Install and enable **Cities2 Chief of Staff**.
 6. Fully exit Codex and restart.
 
