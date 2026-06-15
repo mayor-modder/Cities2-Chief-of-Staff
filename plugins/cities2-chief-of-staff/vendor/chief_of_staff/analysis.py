@@ -71,15 +71,13 @@ def build_city_report(inventory: SourceInventory) -> CityReport:
     else:
         lines.append("- All known evidence sources are usable.")
 
+    missing_source_names = [source.name for source in missing_sources]
+
     return CityReport(
         city_name=city_name,
         evidence_sources=[source.name for source in inventory.available_sources],
-        missing_sources=[source.name for source in inventory.sources if not source.available],
-        missing_optional_sources=[
-            source.name
-            for source in inventory.sources
-            if not source.available and source.name != "dataexport"
-        ],
+        missing_sources=missing_source_names,
+        missing_optional_sources=missing_source_names,
         markdown="\n".join(lines).strip() + "\n",
         facts=facts,
     )

@@ -122,7 +122,7 @@ class SourceDiscoveryTests(unittest.TestCase):
         )
         self.assertEqual(
             report.missing_optional_sources,
-            ["saveinvestigator", "infoloombridge"],
+            ["dataexport", "saveinvestigator", "infoloombridge"],
         )
         payload = report.to_dict()
         self.assertEqual(payload["missing_sources"], report.missing_sources)
