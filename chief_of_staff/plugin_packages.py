@@ -380,7 +380,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print("Plugin package generated artifacts differ from canonical sources.")
     print("Canonical sources: chief_of_staff/plugin_metadata.py, skills/cities2-chief-of-staff, chief_of_staff")
-    print("generated packages: " + ", ".join(platform.dist_package_root.as_posix() for platform in PLATFORMS))
+    print("generated packages: " + ", ".join(platform.dist_package_root.as_posix() for platform in platforms))
     print("Run: python -m chief_of_staff.plugin_packages sync")
     print("Stale paths:")
     for path in stale:
