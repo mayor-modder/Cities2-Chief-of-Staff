@@ -37,15 +37,15 @@ Enter `/plugin`, install **Cities2 Chief of Staff**, then restart Codex.
 Type `$` and choose `cities2-chief-of-staff`, or invoke it directly:
 
 ```text
-$cities2-chief-of-staff:cities2-chief-of-staff Brief me on my city like the mayor.
+$cities2-chief-of-staff:cities2-chief-of-staff Prepare today's mayoral briefing.
 ```
 
 ```text
-$cities2-chief-of-staff:cities2-chief-of-staff What evidence sources are available for my city?
+$cities2-chief-of-staff:cities2-chief-of-staff Show me the city's top priorities.
 ```
 
 ```text
-$cities2-chief-of-staff:cities2-chief-of-staff Analyze my latest Cities: Skylines II city evidence.
+$cities2-chief-of-staff:cities2-chief-of-staff Recommend the next moves for my city.
 ```
 
 You can also check available skills with `/skills`.
@@ -80,8 +80,16 @@ python -m unittest discover -s tests -p "test_*.py"
 python -m chief_of_staff.plugin_packages check
 ```
 
-To refresh generated plugin package files after changing canonical sources:
+To refresh the ignored local plugin package under `dist/plugins/` after
+changing canonical sources:
 
 ```sh
 python -m chief_of_staff.plugin_packages sync
+```
+
+To refresh the shared marketplace catalog checkout after generating the local
+package:
+
+```sh
+python -m chief_of_staff.plugin_packages sync-catalog --catalog-root ../Mayor-Modder-Cities2-Plugins
 ```

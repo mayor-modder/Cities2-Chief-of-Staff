@@ -174,3 +174,17 @@ Run tests:
 ```powershell
 python -m unittest discover -s tests -p "test_*.py"
 ```
+
+Check generated Codex plugin package output:
+
+```powershell
+python -m chief_of_staff.plugin_packages check
+```
+
+Generated plugin package files are written under ignored `dist/plugins/`.
+When publishing a package snapshot, refresh the shared
+`Mayor-Modder-Cities2-Plugins` catalog checkout with:
+
+```powershell
+python -m chief_of_staff.plugin_packages sync-catalog --catalog-root ../Mayor-Modder-Cities2-Plugins
+```
