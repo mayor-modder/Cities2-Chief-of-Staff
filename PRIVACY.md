@@ -1,6 +1,6 @@
 # Privacy
 
-Cities2-ChiefOfStaff is local-first city analysis for Cities: Skylines II.
+Cities2-Chief-of-Staff is local-first city analysis for Cities: Skylines II.
 
 The project does not collect telemetry, does not phone home, and does not send game data to the maintainers. It reads local files that the user points it at or
 that Cities: Skylines II tools write on the user's machine.
