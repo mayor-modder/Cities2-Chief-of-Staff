@@ -10,8 +10,8 @@ not send game data to the maintainers. It runs locally through your chosen
 agent environment, and only that client or model provider may process prompts
 and tool outputs according to your settings. See the repository `PRIVACY.md`.
 
-Install from this repository marketplace:
+Install from the shared Mayor Modder Cities2 Plugins marketplace:
 
 ```sh
-codex plugin marketplace add mayor-modder/Cities2-Chief-of-Staff
+codex plugin marketplace add mayor-modder/Mayor-Modder-Cities2-Plugins
 ```

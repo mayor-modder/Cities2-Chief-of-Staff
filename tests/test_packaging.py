@@ -42,6 +42,12 @@ class PackagingTests(unittest.TestCase):
         )
         self.assertIn("defaultPrompt", plugin["interface"])
 
+        self.assertEqual(marketplace["interface"]["displayName"], "Mayor Modder")
+        self.assertNotEqual(
+            marketplace["interface"]["displayName"],
+            plugin["interface"]["displayName"],
+        )
+
         server = plugin_mcp["mcpServers"]["cities2-chief-of-staff"]
         self.assertEqual(server["command"], "node")
         self.assertIn("./bin/cities2-chief-of-staff-launcher.js", server["args"])

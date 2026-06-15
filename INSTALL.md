@@ -9,10 +9,10 @@ does not send game data to the maintainers. See [PRIVACY.md](PRIVACY.md).
 
 ## Install In Codex CLI
 
-In your system terminal, add this repository as a Codex plugin marketplace:
+In your system terminal, add the shared Mayor Modder Cities2 Plugins marketplace:
 
 ```sh
-codex plugin marketplace add mayor-modder/Cities2-Chief-of-Staff
+codex plugin marketplace add mayor-modder/Mayor-Modder-Cities2-Plugins
 ```
 
 Then start Codex from the folder where you want to work:
@@ -28,7 +28,7 @@ Enter `/plugin`, install **Cities2 Chief of Staff**, then restart Codex.
 1. Open the Codex app and choose **Plugins** from the sidebar.
 2. Look for the **+** button and click the down arrow next to it.
 3. Click **Add marketplace**.
-4. Enter source `mayor-modder/Cities2-Chief-of-Staff`.
+4. Enter source `mayor-modder/Mayor-Modder-Cities2-Plugins`.
 5. Install and enable **Cities2 Chief of Staff**.
 6. Fully exit Codex and restart.
 
