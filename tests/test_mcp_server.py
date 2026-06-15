@@ -239,6 +239,26 @@ class McpServerTests(unittest.TestCase):
                                 ],
                             }
                         ],
+                        "TopQueueHotspots": [
+                            {
+                                "LineDisplayName": "Gold Line",
+                                "LineEntityIndex": 950806,
+                                "RouteNumber": 5,
+                                "ColorHex": "#FFD100",
+                                "TotalWaitingPassengers": 405,
+                                "MaxStopQueue": 81,
+                                "TopStop": {
+                                    "StopEntityIndex": 261492,
+                                    "OwnerEntityIndex": 950806,
+                                    "WaitingPassengers": 81,
+                                    "StationName": "Jacob Circle",
+                                    "StationMode": "subway",
+                                    "StationRole": "station",
+                                    "ResolutionStatus": "resolved_by_service_join",
+                                    "EvidenceNotes": ["queue_stop_entity:261492"],
+                                },
+                            }
+                        ],
                     }
                 ),
                 encoding="utf-8",
@@ -290,6 +310,8 @@ class McpServerTests(unittest.TestCase):
         self.assertIn("Jacob Circle", payload["lines"][0]["station_names"])
         self.assertEqual(payload["station_services"][0]["station_name"], "Jacob Circle")
         self.assertEqual(payload["station_services"][0]["line_name"], "Gold Line")
+        self.assertEqual(payload["saved_queue_hotspots"][0]["top_stop"]["station_name"], "Jacob Circle")
+        self.assertEqual(payload["saved_queue_hotspots"][0]["top_stop"]["resolution_status"], "resolved_by_service_join")
         self.assertEqual(payload["unresolved_live_stop_queues"][0]["line_name"], "Gold Line")
         self.assertIn("waypoint-to-station", payload["unresolved_live_stop_queues"][0]["unresolved_reason"])
 

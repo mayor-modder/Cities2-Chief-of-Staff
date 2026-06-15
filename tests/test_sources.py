@@ -241,6 +241,25 @@ class SourceDiscoveryTests(unittest.TestCase):
                                 ],
                             }
                         ],
+                        "TopQueueHotspots": [
+                            {
+                                "LineDisplayName": "Isaiah Streetcar",
+                                "LineEntityIndex": 483376,
+                                "RouteNumber": 2,
+                                "ColorHex": "#EB131B",
+                                "TotalWaitingPassengers": 436,
+                                "MaxStopQueue": 110,
+                                "TopStop": {
+                                    "StopEntityIndex": 261001,
+                                    "OwnerEntityIndex": 483376,
+                                    "WaitingPassengers": 110,
+                                    "StationName": "Isaiah Junction",
+                                    "StationMode": "tram",
+                                    "StationRole": "station",
+                                    "ResolutionStatus": "resolved_by_service_join",
+                                },
+                            }
+                        ],
                     }
                 ),
                 encoding="utf-8",
@@ -284,6 +303,7 @@ class SourceDiscoveryTests(unittest.TestCase):
         self.assertIn("Isaiah Junction", snapshot["lines"][0]["station_names"])
         self.assertEqual(snapshot["station_services"][0]["line_name"], "Isaiah Streetcar")
         self.assertEqual(snapshot["stations"][0]["name"], "Isaiah Junction")
+        self.assertEqual(snapshot["saved_queue_hotspots"][0]["top_stop"]["station_name"], "Isaiah Junction")
 
 
 if __name__ == "__main__":
