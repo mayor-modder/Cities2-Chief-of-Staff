@@ -41,6 +41,8 @@ class PackagingTests(unittest.TestCase):
             "https://github.com/mayor-modder/Cities2-Chief-of-Staff/blob/main/PRIVACY.md",
         )
         self.assertIn("defaultPrompt", plugin["interface"])
+        self.assertIn("Brief me on my latest city evidence.", plugin["interface"]["defaultPrompt"])
+        self.assertNotIn("Brief me on my city like the mayor.", plugin["interface"]["defaultPrompt"])
 
         self.assertEqual(marketplace["interface"]["displayName"], "Mayor Modder")
         self.assertNotEqual(
