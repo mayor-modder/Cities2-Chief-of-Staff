@@ -10,7 +10,9 @@ It is separate from, but complementary to:
 
 Chief of Staff reads whatever local evidence is available and turns it into briefs an agent or human can use.
 
-Install the Codex plugin with [INSTALL.md](INSTALL.md).
+Cities2 Chief of Staff ships for both Codex and Claude Code from the shared
+Mayor Modder Cities2 Plugins marketplace. See [INSTALL.md](INSTALL.md) for
+per-client steps.
 
 ## Privacy
 

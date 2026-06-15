@@ -33,6 +33,21 @@ Enter `/plugin`, install **Cities2 Chief of Staff**, then restart Codex.
 5. Install and enable **Cities2 Chief of Staff**.
 6. Fully exit Codex and restart.
 
+## Install in Claude Code
+
+In Claude Code, add the shared Mayor Modder Cities2 Plugins marketplace and
+install the plugin:
+
+```text
+/plugin marketplace add mayor-modder/Mayor-Modder-Cities2-Plugins
+/plugin install cities2-chief-of-staff@mayor-modder-cities2
+```
+
+The plugin bundles the Chief of Staff skill (namespaced
+`/cities2-chief-of-staff:cities2-chief-of-staff`) and a plugin-local MCP server.
+It requires Python 3.11 or newer on your PATH; set
+`CITIES2_CHIEF_OF_STAFF_PYTHON` to a specific interpreter if needed.
+
 ## Use The Skill
 
 Type `$` and choose `cities2-chief-of-staff`, or invoke it directly:
