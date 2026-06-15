@@ -154,15 +154,19 @@ class PackagingTests(unittest.TestCase):
             catalog = root / "catalog"
             (catalog / ".agents" / "plugins").mkdir(parents=True)
             (catalog / ".agents" / "plugins" / "marketplace.json").write_text("{}\n", encoding="utf-8")
+            (catalog / ".claude-plugin").mkdir(parents=True)
+            (catalog / ".claude-plugin" / "marketplace.json").write_text("{}\n", encoding="utf-8")
             self._write_plugin_sync_fixture(root)
 
             changed = plugin_packages.sync_catalog_package(catalog, repo_root=root)
-            target = catalog / "plugins" / "cities2-chief-of-staff"
+            codex_target = catalog / "plugins" / "cities2-chief-of-staff"
+            claude_target = catalog / "plugins" / "cities2-chief-of-staff-claude"
 
-            self.assertTrue((target / ".codex-plugin" / "plugin.json").is_file())
-            self.assertTrue((target / ".mcp.json").is_file())
-            self.assertTrue((target / "skills" / "cities2-chief-of-staff" / "SKILL.md").is_file())
-            self.assertIn(target / ".codex-plugin" / "plugin.json", changed)
+            self.assertTrue((codex_target / ".codex-plugin" / "plugin.json").is_file())
+            self.assertTrue((claude_target / ".claude-plugin" / "plugin.json").is_file())
+            self.assertTrue((claude_target / ".mcp.json").is_file())
+            self.assertTrue((claude_target / "skills" / "cities2-chief-of-staff" / "SKILL.md").is_file())
+            self.assertIn(claude_target / ".claude-plugin" / "plugin.json", changed)
 
     def test_plugin_package_check_output_explains_sync_command(self) -> None:
         from chief_of_staff import plugin_packages
