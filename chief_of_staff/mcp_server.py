@@ -58,12 +58,12 @@ def tools_catalog() -> list[JSON]:
     return [
         {
             "name": "chief_of_staff_get_status",
-            "description": "List detected Cities: Skylines II city evidence sources.",
+            "description": "List detected Cities: Skylines II city evidence sources for the Chief of Staff.",
             "inputSchema": {"type": "object", "properties": {}},
         },
         {
             "name": "chief_of_staff_analyze_city",
-            "description": "Refresh Save Investigator, then analyze available city evidence and return a structured Chief of Staff brief.",
+            "description": "Refresh Save Investigator, then analyze available city evidence and return a structured Chief of Staff report.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
