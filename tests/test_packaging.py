@@ -233,6 +233,25 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("/plugin install cities2-chief-of-staff@mayor-modder-cities2", text)
         self.assertIn("does not collect telemetry", text)
 
+    def test_platform_registry_describes_codex_and_claude(self) -> None:
+        from chief_of_staff import plugin_metadata
+
+        keys = {platform.key for platform in plugin_metadata.PLATFORMS}
+        self.assertEqual(keys, {"codex", "claude"})
+
+        codex = plugin_metadata.PLATFORMS_BY_KEY["codex"]
+        claude = plugin_metadata.PLATFORMS_BY_KEY["claude"]
+
+        self.assertEqual(codex.manifest_dir, ".codex-plugin")
+        self.assertEqual(str(codex.dist_package_root), str(Path("dist/plugins/cities2-chief-of-staff")))
+        self.assertEqual(str(codex.catalog_marketplace_rel), str(Path(".agents/plugins/marketplace.json")))
+
+        self.assertEqual(claude.manifest_dir, ".claude-plugin")
+        self.assertEqual(str(claude.dist_package_root), str(Path("dist/plugins/cities2-chief-of-staff-claude")))
+        self.assertEqual(str(claude.catalog_package_root), str(Path("plugins/cities2-chief-of-staff-claude")))
+        self.assertEqual(str(claude.catalog_marketplace_rel), str(Path(".claude-plugin/marketplace.json")))
+        self.assertEqual(claude.plugin_json(), plugin_metadata.claude_plugin_json())
+
     @staticmethod
     def _write_plugin_sync_fixture(root: Path) -> None:
         skill_dir = root / "skills" / "cities2-chief-of-staff"

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Callable
 
 from chief_of_staff import __version__ as VERSION
 
@@ -186,3 +189,44 @@ Install from the shared Mayor Modder Cities2 Plugins marketplace:
 /plugin install {NAME}@{CLAUDE_MARKETPLACE_NAME}
 ```
 """
+
+
+@dataclass(frozen=True)
+class Platform:
+    key: str
+    manifest_dir: str
+    plugin_json: Callable[[], str]
+    mcp_json: Callable[[], str]
+    readme_md: Callable[[], str]
+    marketplace_json: Callable[[], str]
+    dist_package_root: Path
+    catalog_package_root: Path
+    catalog_marketplace_rel: Path
+
+
+CODEX = Platform(
+    key="codex",
+    manifest_dir=".codex-plugin",
+    plugin_json=codex_plugin_json,
+    mcp_json=codex_mcp_json,
+    readme_md=codex_readme_md,
+    marketplace_json=codex_marketplace_json,
+    dist_package_root=Path("dist/plugins/cities2-chief-of-staff"),
+    catalog_package_root=Path("plugins/cities2-chief-of-staff"),
+    catalog_marketplace_rel=Path(".agents/plugins/marketplace.json"),
+)
+
+CLAUDE = Platform(
+    key="claude",
+    manifest_dir=".claude-plugin",
+    plugin_json=claude_plugin_json,
+    mcp_json=claude_mcp_json,
+    readme_md=claude_readme_md,
+    marketplace_json=claude_marketplace_json,
+    dist_package_root=Path("dist/plugins/cities2-chief-of-staff-claude"),
+    catalog_package_root=Path("plugins/cities2-chief-of-staff-claude"),
+    catalog_marketplace_rel=Path(".claude-plugin/marketplace.json"),
+)
+
+PLATFORMS = (CODEX, CLAUDE)
+PLATFORMS_BY_KEY = {platform.key: platform for platform in PLATFORMS}
