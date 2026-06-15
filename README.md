@@ -10,6 +10,12 @@ It is separate from:
 
 Chief of Staff reads whatever local evidence is available and turns it into briefs an agent or human can use.
 
+## Privacy
+
+Chief of Staff analyzes local city evidence through your chosen agent
+environment. The project does not collect telemetry, does not phone home, and
+does not send game data to the maintainers. See [PRIVACY.md](PRIVACY.md).
+
 ## Current First Version
 
 This first version can:
@@ -22,6 +28,18 @@ This first version can:
 - expose the same brief/status through a small MCP server
 
 Only Python is required for the current Chief of Staff layer. Optional evidence sources make briefs better, but they are not required for the tool to start.
+
+## Optional Companion Evidence
+
+Chief of Staff works without optional in-game companion exports, but reports are
+more useful when these local files are available:
+
+- Cities2-DataExport: live city samples from `ModsData/CS2DataExport/latest.json`
+- Cities2-InfoLoomBridge: optional InfoLoom-derived detail from `ModsData/InfoLoomBridge/latest.json`
+- Save Investigator: save-derived facts refreshed before report-producing workflows
+
+Missing companion evidence is shown in the status output and in the report's
+confidence notes.
 
 ## Command Line
 
