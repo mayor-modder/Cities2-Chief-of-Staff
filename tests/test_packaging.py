@@ -65,6 +65,9 @@ class PackagingTests(unittest.TestCase):
     def test_codex_plugin_payload_contains_skill_and_vendored_server(self) -> None:
         self.assertTrue((PLUGIN_ROOT / "skills" / "brief" / "SKILL.md").is_file())
         self.assertFalse((PLUGIN_ROOT / "skills" / "cities2-chief-of-staff").exists())
+        self.assertTrue((PLUGIN_ROOT / "tools" / "SaveInvestigator" / "SaveInvestigator.csproj").is_file())
+        self.assertFalse((PLUGIN_ROOT / "tools" / "SaveInvestigator" / "bin").exists())
+        self.assertFalse((PLUGIN_ROOT / "tools" / "SaveInvestigator" / "obj").exists())
         self.assertTrue((PLUGIN_ROOT / "vendor" / "run_server.py").is_file())
         self.assertTrue((PLUGIN_ROOT / "vendor" / "chief_of_staff" / "mcp_server.py").is_file())
         self.assertTrue((PLUGIN_ROOT / "bin" / "cities2-chief-of-staff-launcher.js").is_file())
@@ -197,3 +200,10 @@ class PackagingTests(unittest.TestCase):
         package_dir.mkdir(parents=True, exist_ok=True)
         (package_dir / "__init__.py").write_text('__version__ = "0.1.0"\n', encoding="utf-8")
         (package_dir / "mcp_server.py").write_text("def main(): return 0\n", encoding="utf-8")
+
+        tool_dir = root / "tools" / "SaveInvestigator"
+        tool_dir.mkdir(parents=True, exist_ok=True)
+        (tool_dir / "SaveInvestigator.csproj").write_text("<Project />\n", encoding="utf-8")
+        generated_dir = tool_dir / "bin" / "Debug" / "net8.0"
+        generated_dir.mkdir(parents=True, exist_ok=True)
+        (generated_dir / "generated.dll").write_bytes(b"generated")
