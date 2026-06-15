@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ROOT = ROOT / "dist" / "plugins" / "cities2-chief-of-staff"
+CLAUDE_PLUGIN_ROOT = ROOT / "dist" / "plugins" / "cities2-chief-of-staff-claude"
 
 
 class PackagingTests(unittest.TestCase):
@@ -257,6 +258,72 @@ class PackagingTests(unittest.TestCase):
         self.assertEqual(str(claude.catalog_package_root), str(Path("plugins/cities2-chief-of-staff-claude")))
         self.assertEqual(str(claude.catalog_marketplace_rel), str(Path(".claude-plugin/marketplace.json")))
         self.assertEqual(claude.plugin_json(), plugin_metadata.claude_plugin_json())
+
+    def test_claude_dist_metadata_is_present_and_lean(self) -> None:
+        plugin = json.loads((CLAUDE_PLUGIN_ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        plugin_mcp = json.loads((CLAUDE_PLUGIN_ROOT / ".mcp.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(plugin["name"], "cities2-chief-of-staff")
+        self.assertEqual(plugin["displayName"], "Cities2 Chief of Staff")
+        self.assertEqual(plugin["version"], "0.1.0")
+        self.assertEqual(plugin["skills"], "./skills/")
+        self.assertEqual(plugin["mcpServers"], "./.mcp.json")
+        self.assertNotIn("interface", plugin)
+
+        server = plugin_mcp["mcpServers"]["cities2-chief-of-staff"]
+        self.assertEqual(server["command"], "node")
+        self.assertIn("${CLAUDE_PLUGIN_ROOT}/bin/cities2-chief-of-staff-launcher.js", server["args"])
+        self.assertNotIn("cwd", server)
+
+    def test_claude_dist_payload_contains_skill_and_vendored_server(self) -> None:
+        self.assertTrue((CLAUDE_PLUGIN_ROOT / "skills" / "cities2-chief-of-staff" / "SKILL.md").is_file())
+        self.assertTrue((CLAUDE_PLUGIN_ROOT / "vendor" / "run_server.py").is_file())
+        self.assertTrue((CLAUDE_PLUGIN_ROOT / "vendor" / "chief_of_staff" / "mcp_server.py").is_file())
+        self.assertTrue((CLAUDE_PLUGIN_ROOT / "bin" / "cities2-chief-of-staff-launcher.js").is_file())
+
+    def test_claude_dist_launcher_serves_mcp_initialize(self) -> None:
+        proc = subprocess.Popen(
+            ["node", str(CLAUDE_PLUGIN_ROOT / "bin" / "cities2-chief-of-staff-launcher.js")],
+            cwd=ROOT,
+            env={**os.environ, "PLUGIN_ROOT": str(CLAUDE_PLUGIN_ROOT)},
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        assert proc.stdin and proc.stdout and proc.stderr
+        try:
+            request = {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}
+            payload = json.dumps(request).encode("utf-8")
+            proc.stdin.write(f"Content-Length: {len(payload)}\r\n\r\n".encode("ascii") + payload)
+            proc.stdin.flush()
+
+            header = proc.stdout.readline().decode("ascii")
+            self.assertTrue(header.startswith("Content-Length:"), header)
+            content_length = int(header.split(":", 1)[1].strip())
+            self.assertEqual(proc.stdout.readline(), b"\r\n")
+            response = json.loads(proc.stdout.read(content_length).decode("utf-8"))
+
+            self.assertEqual(response["result"]["serverInfo"]["name"], "Cities2-ChiefOfStaff")
+            self.assertEqual(response["result"]["serverInfo"]["version"], "0.1.0")
+        finally:
+            self._stop_proc(proc)
+
+    def test_sync_catalog_package_target_selects_single_platform(self) -> None:
+        from chief_of_staff import plugin_metadata, plugin_packages
+
+        with tempfile.TemporaryDirectory(prefix="chief-of-staff-plugin-sync-") as tmp:
+            root = Path(tmp)
+            catalog = root / "catalog"
+            (catalog / ".agents" / "plugins").mkdir(parents=True)
+            (catalog / ".agents" / "plugins" / "marketplace.json").write_text("{}\n", encoding="utf-8")
+            self._write_plugin_sync_fixture(root)
+
+            plugin_packages.sync_catalog_package(
+                catalog, repo_root=root, platforms=(plugin_metadata.CODEX,)
+            )
+
+            self.assertTrue((catalog / "plugins" / "cities2-chief-of-staff" / ".codex-plugin" / "plugin.json").is_file())
+            self.assertFalse((catalog / "plugins" / "cities2-chief-of-staff-claude").exists())
 
     @staticmethod
     def _write_plugin_sync_fixture(root: Path) -> None:
