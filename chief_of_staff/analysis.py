@@ -74,7 +74,12 @@ def build_city_report(inventory: SourceInventory) -> CityReport:
     return CityReport(
         city_name=city_name,
         evidence_sources=[source.name for source in inventory.available_sources],
-        missing_optional_sources=[source.name for source in inventory.sources if not source.available],
+        missing_sources=[source.name for source in inventory.sources if not source.available],
+        missing_optional_sources=[
+            source.name
+            for source in inventory.sources
+            if not source.available and source.name != "dataexport"
+        ],
         markdown="\n".join(lines).strip() + "\n",
         facts=facts,
     )

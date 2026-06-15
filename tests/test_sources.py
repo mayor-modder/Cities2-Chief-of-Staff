@@ -111,6 +111,22 @@ class SourceDiscoveryTests(unittest.TestCase):
         self.assertIn("Missing Save Investigator limits save-derived diagnosis.", report.markdown)
         self.assertIn("Missing Cities2-InfoLoomBridge limits detailed InfoLoom-derived diagnosis.", report.markdown)
 
+    def test_report_distinguishes_all_missing_sources_from_optional_missing_sources(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            inventory = discover_sources(mods_data_dir=Path(tmp) / "ModsData")
+            report = build_city_report(inventory)
+
+        self.assertEqual(
+            report.missing_sources,
+            ["dataexport", "saveinvestigator", "infoloombridge"],
+        )
+        self.assertEqual(
+            report.missing_optional_sources,
+            ["saveinvestigator", "infoloombridge"],
+        )
+        payload = report.to_dict()
+        self.assertEqual(payload["missing_sources"], report.missing_sources)
+
     def test_reads_power_shell_utf8_json_with_bom(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             mods_data = Path(tmp) / "ModsData"
