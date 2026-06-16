@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills" / "brief" / "SKILL.md"
+SKILL = ROOT / "skills" / "cities2-chief-of-staff" / "SKILL.md"
 EVIDENCE = ROOT / "docs" / "superpowers" / "skill-tests" / "2026-06-14-cities2-chief-of-staff.md"
 
 
@@ -14,8 +14,8 @@ class SkillContentTests(unittest.TestCase):
         text = SKILL.read_text(encoding="utf-8")
         frontmatter = _parse_frontmatter(text)
 
-        self.assertTrue(text.startswith("---\nname: brief\n"))
-        self.assertEqual(frontmatter["name"], "brief")
+        self.assertTrue(text.startswith("---\nname: cities2-chief-of-staff\n"))
+        self.assertEqual(frontmatter["name"], "cities2-chief-of-staff")
         self.assertTrue(frontmatter["description"].startswith("Use when"))
         self.assertIn("Mayor's office Chief of Staff", text)
         self.assertIn("chief_of_staff_analyze_city", text)

@@ -63,8 +63,8 @@ class PackagingTests(unittest.TestCase):
         self.assertEqual(server["cwd"], ".")
 
     def test_codex_plugin_payload_contains_skill_and_vendored_server(self) -> None:
-        self.assertTrue((PLUGIN_ROOT / "skills" / "brief" / "SKILL.md").is_file())
-        self.assertFalse((PLUGIN_ROOT / "skills" / "cities2-chief-of-staff").exists())
+        self.assertTrue((PLUGIN_ROOT / "skills" / "cities2-chief-of-staff" / "SKILL.md").is_file())
+        self.assertFalse((PLUGIN_ROOT / "skills" / "brief").exists())
         self.assertTrue((PLUGIN_ROOT / "tools" / "SaveInvestigator" / "SaveInvestigator.csproj").is_file())
         self.assertFalse((PLUGIN_ROOT / "tools" / "SaveInvestigator" / "bin").exists())
         self.assertFalse((PLUGIN_ROOT / "tools" / "SaveInvestigator" / "obj").exists())
@@ -120,7 +120,7 @@ class PackagingTests(unittest.TestCase):
             package_root = Path("dist") / "plugins" / "cities2-chief-of-staff"
 
             changed = plugin_packages.sync_packages(root, package_roots=(package_root,))
-            stale_skill = root / package_root / "skills" / "brief" / "SKILL.md"
+            stale_skill = root / package_root / "skills" / "cities2-chief-of-staff" / "SKILL.md"
             stale_skill.write_text("stale\n", encoding="utf-8")
 
             stale = plugin_packages.check_packages(root, package_roots=(package_root,))
@@ -165,7 +165,7 @@ class PackagingTests(unittest.TestCase):
 
             self.assertTrue((target / ".codex-plugin" / "plugin.json").is_file())
             self.assertTrue((target / ".mcp.json").is_file())
-            self.assertTrue((target / "skills" / "brief" / "SKILL.md").is_file())
+            self.assertTrue((target / "skills" / "cities2-chief-of-staff" / "SKILL.md").is_file())
             self.assertIn(target / ".codex-plugin" / "plugin.json", changed)
 
     def test_plugin_package_check_output_explains_sync_command(self) -> None:
@@ -192,7 +192,7 @@ class PackagingTests(unittest.TestCase):
 
     @staticmethod
     def _write_plugin_sync_fixture(root: Path) -> None:
-        skill_dir = root / "skills" / "brief"
+        skill_dir = root / "skills" / "cities2-chief-of-staff"
         skill_dir.mkdir(parents=True, exist_ok=True)
         (skill_dir / "SKILL.md").write_text("canonical skill\n", encoding="utf-8")
 
