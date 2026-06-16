@@ -64,6 +64,7 @@ class PackagingTests(unittest.TestCase):
 
     def test_codex_plugin_payload_contains_skill_and_vendored_server(self) -> None:
         self.assertTrue((PLUGIN_ROOT / "skills" / "cities2-chief-of-staff" / "SKILL.md").is_file())
+        self.assertTrue((PLUGIN_ROOT / "skills" / "cities2-chief-of-staff" / "agents" / "openai.yaml").is_file())
         self.assertFalse((PLUGIN_ROOT / "skills" / "brief").exists())
         self.assertTrue((PLUGIN_ROOT / "tools" / "SaveInvestigator" / "SaveInvestigator.csproj").is_file())
         self.assertFalse((PLUGIN_ROOT / "tools" / "SaveInvestigator" / "bin").exists())

@@ -6,6 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "cities2-chief-of-staff" / "SKILL.md"
+OPENAI_YAML = ROOT / "skills" / "cities2-chief-of-staff" / "agents" / "openai.yaml"
 EVIDENCE = ROOT / "docs" / "superpowers" / "skill-tests" / "2026-06-14-cities2-chief-of-staff.md"
 
 
@@ -17,6 +18,7 @@ class SkillContentTests(unittest.TestCase):
         self.assertTrue(text.startswith("---\nname: cities2-chief-of-staff\n"))
         self.assertEqual(frontmatter["name"], "cities2-chief-of-staff")
         self.assertTrue(frontmatter["description"].startswith("Use when"))
+        self.assertIn('short-description: "Brief CS2 mayors from local city evidence"', text)
         self.assertIn("Mayor's office Chief of Staff", text)
         self.assertIn("chief_of_staff_analyze_city", text)
         self.assertIn("Refresh Save Investigator", text)
@@ -30,6 +32,13 @@ class SkillContentTests(unittest.TestCase):
             "Never put private local paths, account names, save names, or raw exports into public artifacts",
             normalized,
         )
+
+    def test_skill_ui_metadata_preserves_display_label(self) -> None:
+        text = OPENAI_YAML.read_text(encoding="utf-8")
+
+        self.assertIn('display_name: "Cities2 Chief of Staff"', text)
+        self.assertIn('short_description: "Brief CS2 mayors from local city evidence"', text)
+        self.assertIn('default_prompt: "Use $cities2-chief-of-staff to prepare today', text)
 
     def test_skill_teaches_companion_mod_install_help(self) -> None:
         text = SKILL.read_text(encoding="utf-8")
