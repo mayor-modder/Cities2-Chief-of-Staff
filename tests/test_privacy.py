@@ -21,3 +21,13 @@ class PrivacyDocumentationTests(unittest.TestCase):
 
         self.assertIn("[PRIVACY.md](PRIVACY.md)", text)
         self.assertIn("Chief of Staff analyzes local city evidence", text)
+
+    def test_claude_readme_states_local_first_policy(self) -> None:
+        from chief_of_staff import plugin_metadata
+
+        text = plugin_metadata.claude_readme_md()
+
+        self.assertIn("does not collect telemetry", text)
+        self.assertIn("does not phone home", text)
+        self.assertIn("does not send game data to the maintainers", text)
+        self.assertIn("/plugin install cities2-chief-of-staff@mayor-modder-cities2-plugins", text)
