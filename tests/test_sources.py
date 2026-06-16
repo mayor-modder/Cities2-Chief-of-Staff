@@ -7,6 +7,7 @@ from pathlib import Path
 
 from chief_of_staff.analysis import build_city_report
 from chief_of_staff.sources import discover_sources
+from chief_of_staff.transit import build_transit_snapshot
 
 
 class SourceDiscoveryTests(unittest.TestCase):
@@ -226,6 +227,62 @@ class SourceDiscoveryTests(unittest.TestCase):
                                     },
                                 ],
                             }
+                        ],
+                        "StationGroups": [
+                            {
+                                "Mode": "tram",
+                                "Stations": [
+                                    {
+                                        "Name": "Isaiah Junction",
+                                        "Mode": "tram",
+                                        "ServiceJoinStatus": "resolved",
+                                        "ServedLineNames": ["Isaiah Streetcar"],
+                                    }
+                                ],
+                            }
+                        ],
+                        "TopQueueHotspots": [
+                            {
+                                "LineDisplayName": "Isaiah Streetcar",
+                                "LineEntityIndex": 483376,
+                                "RouteNumber": 2,
+                                "ColorHex": "#EB131B",
+                                "TotalWaitingPassengers": 436,
+                                "MaxStopQueue": 110,
+                                "TopStop": {
+                                    "StopEntityIndex": 261001,
+                                    "OwnerEntityIndex": 483376,
+                                    "WaitingPassengers": 110,
+                                    "StationName": "Isaiah Junction",
+                                    "StationMode": "tram",
+                                    "StationRole": "station",
+                                    "ResolutionStatus": "resolved_by_service_join",
+                                },
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (save_output / "transport-service-join-facts.json").write_text(
+                json.dumps(
+                    {
+                        "Stations": [
+                            {
+                                "Mode": "tram",
+                                "Role": "station",
+                                "Name": "Isaiah Junction",
+                                "JoinStatus": "resolved",
+                                "ExactLines": [
+                                    {
+                                        "LineEntityIndex": 483376,
+                                        "RouteNumber": 2,
+                                        "ColorHex": "#EB131B",
+                                        "LineName": "Isaiah Streetcar",
+                                        "JoinComponentType": "Game.Routes.Connected",
+                                    }
+                                ],
+                            }
                         ]
                     }
                 ),
@@ -242,6 +299,11 @@ class SourceDiscoveryTests(unittest.TestCase):
         self.assertIn("Swan Streetcar: 90 waiting, max stop 55", report.markdown)
         self.assertLess(report.markdown.index("Save understanding"), report.markdown.index("## Transit Hotspots"))
         self.assertNotIn("Route 2", report.markdown)
+        snapshot = build_transit_snapshot(inventory)
+        self.assertIn("Isaiah Junction", snapshot["lines"][0]["station_names"])
+        self.assertEqual(snapshot["station_services"][0]["line_name"], "Isaiah Streetcar")
+        self.assertEqual(snapshot["stations"][0]["name"], "Isaiah Junction")
+        self.assertEqual(snapshot["saved_queue_hotspots"][0]["top_stop"]["station_name"], "Isaiah Junction")
 
 
 if __name__ == "__main__":

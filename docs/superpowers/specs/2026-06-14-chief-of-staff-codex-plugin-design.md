@@ -30,7 +30,7 @@ Planned identity changes:
   `cityadvisor_get_report` to `chief_of_staff_get_status`,
   `chief_of_staff_analyze_city`, and `chief_of_staff_get_report`.
 - Codex plugin name: `cities2-chief-of-staff`.
-- Skill name: `cities2-chief-of-staff`.
+- Skill name: `brief`.
 
 The Chief of Staff role should brief the mayor on current city conditions,
 surface risks, recommend priorities, and name missing evidence that would
@@ -82,7 +82,7 @@ launcher, or vendored package payloads drift from canonical sources.
 
 ## Chief of Staff Skill
 
-Add one Codex skill at `skills/cities2-chief-of-staff/SKILL.md` and include it
+Add one Codex skill at `skills/brief/SKILL.md` and include it
 in the generated plugin package.
 
 The skill should teach the agent to embody the Mayor's office Chief of Staff:

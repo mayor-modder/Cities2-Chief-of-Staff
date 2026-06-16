@@ -42,6 +42,22 @@ Expected failure pattern to watch for: trying to use Chief of Staff instead of r
 
 Baseline result: Before the skill exists, there is no local Chief of Staff boundary that says this repo is for city evidence analysis only. An agent could confuse Cities2-CityAdvisor with mod scaffolding or packaging work and fail to route that request to Cities2-MCP tooling.
 
+### Scenario 6: Companion Mod Install Help
+
+Prompt: "I want better Chief of Staff evidence. Help me install Cities2-DataExport and Cities2-InfoLoomBridge from GitHub on Windows. I'm using PowerShell and source zips can extract into nested folders. What should I do, and how do I verify they worked? Also, do I need to enable the local mods in the in-game mod list?"
+
+Expected failure pattern to watch for: missing repo URLs, project files, PowerShell-first build flow, verification paths, InfoLoomBridge dependency notes, or local-mod loading guidance.
+
+Baseline result: A fresh agent given the pre-install-help skill could not provide install steps from the skill alone. It routed generally to Cities2-MCP for modding workflows and marked repo URLs, project files, nested PowerShell project discovery, `DOTNET_ROLL_FORWARD`, `Remove-Item`, output JSON paths, and InfoLoom/InfoLoom Two guidance as missing. It did not invent a mod-list enable step, but only because the old skill provided no such instruction.
+
+### Scenario 7: Specific InfoLoom Two Dependency
+
+Prompt: "Install InfoLoomBridge, but make sure it has the exact InfoLoom dependency it expects. How do you check whether the right InfoLoom is installed locally or through Paradox Mods?"
+
+Expected failure pattern to watch for: saying any InfoLoom or InfoLoom Two install is enough without naming BruceyBoy's Paradox mod 91433, the GitHub source, the `InfoLoomTwo.dll` assembly names, or the local `Mods` and `.cache/Mods/pdx_mods` search locations.
+
+Baseline result: The prior skill said only "InfoLoom or InfoLoom Two installed." That leaves an agent likely to accept unrelated InfoLoom-family mods or stop after checking the bridge itself, rather than verifying the exact package and assembly names that InfoLoomBridge consumes.
+
 ## Post-Skill Results
 
 ### Scenario 1: Missing Companion Evidence
@@ -79,3 +95,22 @@ Post-skill result: The skill states not to use Chief of Staff for mod
 scaffolding, mod debugging, or release workflows, and to route those requests to
 Cities2-MCP when available. This closes the boundary failure identified in the
 baseline.
+
+### Scenario 6: Companion Mod Install Help
+
+Post-skill result: A fresh agent given the updated skill supplied both public
+repo URLs, both project filenames, a PowerShell-first nested project-file
+discovery and build flow, `DOTNET_ROLL_FORWARD`, `Remove-Item` for `obj` and
+`bin`, both `ModsData/.../latest.json` verification paths, the InfoLoom or
+InfoLoom Two requirement for InfoLoomBridge, and no in-game mod-list enable
+step. The agent judged the updated skill sufficient for the install-help
+scenario.
+
+### Scenario 7: Specific InfoLoom Two Dependency
+
+Post-skill result: The skill now identifies BruceyBoy's InfoLoom package by
+Paradox mod URL and GitHub repo, says it appears locally as InfoLoom Two
+assemblies, and tells agents to check for `InfoLoomTwo.dll` or
+`InfoLoomTwo_win_x86_64.dll` under manual `Mods` installs or
+`.cache/Mods/pdx_mods` cache installs before treating the dependency as
+present.
