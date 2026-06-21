@@ -26,7 +26,7 @@ class PublicIdentityTests(unittest.TestCase):
         self.assertEqual(pyproject["tool"]["setuptools"]["packages"]["find"]["include"], ["chief_of_staff*"])
 
     def test_package_version_remains_public_version(self) -> None:
-        self.assertEqual(chief_of_staff.__version__, "0.1.0")
+        self.assertEqual(chief_of_staff.__version__, "0.1.1")
 
     def test_mcp_server_version_flag_prints_public_name(self) -> None:
         result = subprocess.run(
@@ -37,7 +37,7 @@ class PublicIdentityTests(unittest.TestCase):
             check=True,
         )
 
-        self.assertEqual(result.stdout.strip(), "cities2-chief-of-staff 0.1.0")
+        self.assertEqual(result.stdout.strip(), "cities2-chief-of-staff 0.1.1")
 
     def test_no_cityadvisor_package_directory_remains(self) -> None:
         self.assertFalse((ROOT / "cityadvisor").exists())
@@ -51,7 +51,7 @@ class PublicIdentityTests(unittest.TestCase):
         )
 
         self.assertEqual(response["result"]["serverInfo"]["name"], "Cities2-ChiefOfStaff")
-        self.assertEqual(response["result"]["serverInfo"]["version"], "0.1.0")
+        self.assertEqual(response["result"]["serverInfo"]["version"], "0.1.1")
         self.assertIn("Chief of Staff", response["result"]["instructions"])
 
     def test_claude_metadata_uses_public_identity_only(self) -> None:
@@ -61,7 +61,7 @@ class PublicIdentityTests(unittest.TestCase):
         market = json.loads(plugin_metadata.claude_marketplace_json())
 
         self.assertEqual(plugin["name"], "cities2-chief-of-staff")
-        self.assertEqual(plugin["version"], "0.1.0")
+        self.assertEqual(plugin["version"], "0.1.1")
         self.assertEqual(plugin["author"]["name"], "mayor-modder")
         self.assertEqual(market["name"], "mayor-modder-cities2-plugins")
         self.assertEqual(market["owner"]["name"], "mayor-modder")

@@ -35,7 +35,7 @@ class PackagingTests(unittest.TestCase):
         plugin_mcp = json.loads((PLUGIN_ROOT / ".mcp.json").read_text(encoding="utf-8"))
 
         self.assertEqual(plugin["name"], "cities2-chief-of-staff")
-        self.assertEqual(plugin["version"], "0.1.0")
+        self.assertEqual(plugin["version"], "0.1.1")
         self.assertEqual(plugin["skills"], "./skills/")
         self.assertEqual(plugin["mcpServers"], "./.mcp.json")
         self.assertEqual(plugin["interface"]["displayName"], "Cities2 Chief of Staff")
@@ -84,7 +84,7 @@ class PackagingTests(unittest.TestCase):
             check=True,
         )
 
-        self.assertEqual(result.stdout.strip(), "cities2-chief-of-staff 0.1.0")
+        self.assertEqual(result.stdout.strip(), "cities2-chief-of-staff 0.1.1")
 
     def test_codex_plugin_launcher_serves_mcp_initialize(self) -> None:
         proc = subprocess.Popen(
@@ -109,7 +109,7 @@ class PackagingTests(unittest.TestCase):
             response = json.loads(proc.stdout.read(content_length).decode("utf-8"))
 
             self.assertEqual(response["result"]["serverInfo"]["name"], "Cities2-ChiefOfStaff")
-            self.assertEqual(response["result"]["serverInfo"]["version"], "0.1.0")
+            self.assertEqual(response["result"]["serverInfo"]["version"], "0.1.1")
         finally:
             self._stop_proc(proc)
 
@@ -205,7 +205,7 @@ class PackagingTests(unittest.TestCase):
 
         self.assertEqual(plugin["name"], "cities2-chief-of-staff")
         self.assertEqual(plugin["displayName"], "Cities2 Chief of Staff")
-        self.assertEqual(plugin["version"], "0.1.0")
+        self.assertEqual(plugin["version"], "0.1.1")
         self.assertEqual(plugin["description"], "Cities2 Chief of Staff for Claude Code.")
         self.assertEqual(plugin["skills"], "./skills/")
         self.assertEqual(plugin["mcpServers"], "./.mcp.json")
@@ -233,7 +233,7 @@ class PackagingTests(unittest.TestCase):
         self.assertEqual(market["owner"]["name"], "mayor-modder")
         self.assertEqual(market["plugins"][0]["name"], "cities2-chief-of-staff")
         self.assertEqual(market["plugins"][0]["source"], "./integrations/anthropic/cities2-chief-of-staff")
-        self.assertEqual(market["plugins"][0]["version"], "0.1.0")
+        self.assertEqual(market["plugins"][0]["version"], "0.1.1")
         self.assertEqual(market["plugins"][0]["author"]["name"], "mayor-modder")
 
     def test_claude_readme_has_install_and_privacy(self) -> None:
@@ -270,7 +270,7 @@ class PackagingTests(unittest.TestCase):
 
         self.assertEqual(plugin["name"], "cities2-chief-of-staff")
         self.assertEqual(plugin["displayName"], "Cities2 Chief of Staff")
-        self.assertEqual(plugin["version"], "0.1.0")
+        self.assertEqual(plugin["version"], "0.1.1")
         self.assertEqual(plugin["skills"], "./skills/")
         self.assertEqual(plugin["mcpServers"], "./.mcp.json")
         self.assertNotIn("interface", plugin)
@@ -309,7 +309,7 @@ class PackagingTests(unittest.TestCase):
             response = json.loads(proc.stdout.read(content_length).decode("utf-8"))
 
             self.assertEqual(response["result"]["serverInfo"]["name"], "Cities2-ChiefOfStaff")
-            self.assertEqual(response["result"]["serverInfo"]["version"], "0.1.0")
+            self.assertEqual(response["result"]["serverInfo"]["version"], "0.1.1")
         finally:
             self._stop_proc(proc)
 
@@ -342,7 +342,7 @@ class PackagingTests(unittest.TestCase):
 
         package_dir = root / "chief_of_staff"
         package_dir.mkdir(parents=True, exist_ok=True)
-        (package_dir / "__init__.py").write_text('__version__ = "0.1.0"\n', encoding="utf-8")
+        (package_dir / "__init__.py").write_text('__version__ = "0.1.1"\n', encoding="utf-8")
         (package_dir / "mcp_server.py").write_text("def main(): return 0\n", encoding="utf-8")
 
         tool_dir = root / "tools" / "SaveInvestigator"
