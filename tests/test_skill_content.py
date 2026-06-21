@@ -38,7 +38,9 @@ class SkillContentTests(unittest.TestCase):
 
         self.assertIn('display_name: "Cities2 Chief of Staff"', text)
         self.assertIn('short_description: "Brief CS2 mayors from local city evidence"', text)
-        self.assertIn('default_prompt: "Use $cities2-chief-of-staff to prepare today', text)
+        self.assertIn('default_prompt: "Use $cities2-chief-of-staff ', text)
+        self.assertIn('value: "cities2-chief-of-staff"', text)
+        self.assertIn("Chief of Staff local server", text)
 
     def test_skill_teaches_companion_mod_install_help(self) -> None:
         text = SKILL.read_text(encoding="utf-8")
